@@ -1,0 +1,181 @@
+{% load i18n static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Administration{% endblock %} — KCDélices</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  </head>
+  <body class="min-h-screen bg-blanc text-noir">
+    <div id="admin-backdrop" data-admin-backdrop
+         class="fixed inset-0 z-40 hidden bg-noir/40 lg:hidden" aria-hidden="true"></div>
+
+    <aside id="admin-sidebar"
+           class="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-noir/10 bg-blanc lg:flex">
+      <div class="flex items-center gap-3 border-b border-noir/10 px-5 py-5">
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert text-sm font-bold text-blanc" aria-hidden="true">KC</span>
+        <div>
+          <p class="text-sm font-bold leading-tight">KCDélices</p>
+          <p class="text-xs text-noir/60">{% trans "Administration" %}</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="{% trans 'Navigation de l’administration' %}">
+        {% with current=request.resolver_match.url_name|default:"" %}
+          <a href="{% url 'dashboard' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current == 'dashboard' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>{% trans "Tableau de bord" %}</span>
+          </a>
+
+          <a href="{% url 'quote_list' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if request.path|slice:':7' == '/devis/' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M10 9H8" />
+            </svg>
+            <span>{% trans "Devis" %}</span>
+          </a>
+
+          <a href="{% url 'clients' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current == 'clients' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>{% trans "Clients" %}</span>
+          </a>
+
+          <a href="{% url 'category_list' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current|slice:':8' == 'category_' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
+              <circle cx="7.5" cy="7.5" r=".5" fill="currentColor" />
+            </svg>
+            <span>{% trans "Types d’événements" %}</span>
+          </a>
+
+          <a href="{% url 'achievement_list' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current|slice:':12' == 'achievement_' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" />
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+            </svg>
+            <span>{% trans "Réalisations" %}</span>
+          </a>
+
+          <a href="{% url 'service_list' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current|slice:':8' == 'service_' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+            </svg>
+            <span>{% trans "Services" %}</span>
+          </a>
+
+          <a href="{% url 'company_update' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current == 'company_update' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="2" width="16" height="20" rx="2" /><path d="M9 22v-4h6v4" />
+              <path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M8 10h.01" /><path d="M16 10h.01" />
+              <path d="M8 14h.01" /><path d="M16 14h.01" />
+            </svg>
+            <span>{% trans "Entreprise" %}</span>
+          </a>
+
+          <a href="{% url 'settings' %}"
+             class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {% if current == 'settings' %}bg-vert text-blanc{% else %}text-noir hover:bg-noir/5{% endif %}">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="21" x2="14" y1="4" y2="4" /><line x1="10" x2="3" y1="4" y2="4" />
+              <line x1="21" x2="12" y1="12" y2="12" /><line x1="8" x2="3" y1="12" y2="12" />
+              <line x1="21" x2="16" y1="20" y2="20" /><line x1="12" x2="3" y1="20" y2="20" />
+              <line x1="14" x2="14" y1="2" y2="6" /><line x1="8" x2="8" y1="10" y2="14" />
+              <line x1="16" x2="16" y1="18" y2="22" />
+            </svg>
+            <span>{% trans "Paramètres" %}</span>
+          </a>
+        {% endwith %}
+      </nav>
+
+      <div class="border-t border-noir/10 px-4 py-4">
+        <p class="truncate text-sm font-semibold">{{ request.user.username }}</p>
+        <form method="post" action="{% url 'logout' %}" class="mt-2">
+          {% csrf_token %}
+          <button type="submit"
+                  class="flex items-center gap-2 text-sm font-medium text-noir/70 transition hover:text-vert">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+            {% trans "Déconnexion" %}
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <div class="flex min-h-screen flex-col lg:pl-64">
+      <header class="sticky top-0 z-30 border-b border-noir/10 bg-blanc">
+        <div class="flex h-16 items-center gap-3 px-4 sm:px-6">
+          <button type="button" data-admin-sidebar-toggle
+                  class="flex h-11 w-11 items-center justify-center rounded-lg text-noir transition focus:outline-none focus-visible:ring-2 focus-visible:ring-vert lg:hidden"
+                  aria-label="{% trans 'Ouvrir le menu' %}"
+                  aria-expanded="false"
+                  aria-controls="admin-sidebar">
+            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="1" x2="23" y1="6" y2="6" /><line x1="1" x2="23" y1="12" y2="12" />
+              <line x1="1" x2="23" y1="18" y2="18" />
+            </svg>
+          </button>
+          <p class="hidden text-sm font-semibold text-noir/60 sm:block">{% trans "Espace d’administration" %}</p>
+          <div class="ml-auto flex items-center gap-4">
+            <a href="{% url 'home' %}" target="_blank" rel="noopener"
+               class="hidden items-center gap-2 text-sm font-medium text-noir transition hover:text-vert sm:flex">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />
+              </svg>
+              {% trans "Voir le site" %}
+            </a>
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-vert text-sm font-bold text-blanc"
+                  aria-hidden="true">{{ request.user.username|slice:":1"|upper }}</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:py-10">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="border-t border-noir/10 px-4 py-5 text-center text-xs text-noir/50 sm:px-6">
+        KCDélices — {% trans "Espace d’administration" %}
+      </footer>
+    </div>
+
+    {% if messages %}
+      <div id="toast-container" class="fixed top-4 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2">
+        {% for message in messages %}
+          <div data-toast data-type="{{ message.tags|default:'info' }}"
+               class="flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm font-medium shadow-lg
+               {% if 'success' in message.tags %}bg-vert text-blanc
+               {% elif 'error' in message.tags %}bg-noir/90 text-blanc
+               {% elif 'warning' in message.tags %}bg-noir/70 text-blanc
+               {% else %}bg-noir/80 text-blanc{% endif %}">
+            <span>{{ message }}</span>
+            <button type="button" data-toast-close aria-label="{% trans "Fermer" %}" class="font-bold text-blanc/70 transition hover:text-blanc">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" x2="6" y1="6" y2="18" />
+                <line x1="6" x2="18" y1="18" y2="6" />
+              </svg>
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <script src="{% static 'js/toast.js' %}" defer></script>
+    <script src="{% static 'js/admin.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

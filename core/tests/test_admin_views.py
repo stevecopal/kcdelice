@@ -42,7 +42,7 @@ def test_admin_category_create_change_delete(auth_client):
     category = EventCategory.objects.get(name="Soirees")
 
     response = auth_client.post(
-        f"/admin/core/eventcategory/change/{category.pk}/",
+        f"/admin/core/eventcategory/{category.pk}/change/",
         {"name": "Soirees pro", "is_active": "on"},
     )
     assert response.status_code == 302
@@ -50,7 +50,7 @@ def test_admin_category_create_change_delete(auth_client):
     assert category.name == "Soirees pro"
 
     response = auth_client.post(
-        f"/admin/core/eventcategory/delete/{category.pk}/",
+        f"/admin/core/eventcategory/{category.pk}/delete/",
         {"post": "yes"},
     )
     assert response.status_code == 302
@@ -62,7 +62,7 @@ def test_admin_delete_category_with_achievements_is_refused(auth_client):
     category = EventCategory.objects.create(name="Occupee")
     Achievement.objects.create(title="Realisation", category=category)
     response = auth_client.post(
-        f"/admin/core/eventcategory/delete/{category.pk}/",
+        f"/admin/core/eventcategory/{category.pk}/delete/",
         {"post": "yes"},
     )
     assert response.status_code == 200
@@ -134,7 +134,7 @@ def test_admin_company_cannot_be_added_twice(auth_client):
     assert response.status_code == 403
 
     response = auth_client.post(
-        f"/admin/core/company/change/{company.pk}/",
+        f"/admin/core/company/{company.pk}/change/",
         {
             "name": "KCDelices",
             "presentation": "",

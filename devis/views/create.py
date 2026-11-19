@@ -13,7 +13,6 @@ class QuoteCreateView(LoginRequiredMixin, CreateView):
     model = Quote
     form_class = QuoteForm
     template_name = "devis/quote_form.html"
-    login_url = "admin:login"
 
     def form_valid(self, form):
         messages.success(self.request, "Devis créé avec succès.")

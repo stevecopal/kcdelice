@@ -4,12 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const menu = document.querySelector("[data-nav-menu]");
   if (toggle && menu) {
     toggle.addEventListener("click", () => {
-      const isOpen = menu.classList.toggle("hidden");
+      const isHidden = menu.classList.toggle("hidden");
       menu.classList.toggle("flex");
-      toggle.setAttribute("aria-expanded", String(!isOpen));
-      toggle.setAttribute("aria-label", isOpen
-        ? "{% trans 'Fermer le menu' %}"
-        : "{% trans 'Ouvrir le menu' %}");
+      toggle.setAttribute("aria-expanded", String(!isHidden));
+      toggle.setAttribute("aria-label", isHidden
+        ? "Ouvrir le menu"
+        : "Fermer le menu");
     });
   }
 
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const toggle = document.querySelector("[data-nav-toggle]");
         if (toggle) {
           toggle.setAttribute("aria-expanded", "false");
-          toggle.setAttribute("aria-label", "{% trans 'Ouvrir le menu' %}");
+          toggle.setAttribute("aria-label", "Ouvrir le menu");
         }
       }
     });
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (toggle) {
         toggle.setAttribute("aria-expanded", "false");
-        toggle.setAttribute("aria-label", "{% trans 'Ouvrir le menu' %}");
+        toggle.setAttribute("aria-label", "Ouvrir le menu");
       }
     }
   });

@@ -19,6 +19,7 @@ class Company(models.Model):
     phones = models.JSONField("numéros de contact", default=list, blank=True)
     whatsapp = models.CharField("WhatsApp", max_length=30, blank=True)
     email = models.EmailField("e-mail", blank=True)
+    social_links = models.JSONField("réseaux sociaux", default=list, blank=True)
     created_at = models.DateTimeField("créé le", auto_now_add=True)
     updated_at = models.DateTimeField("modifié le", auto_now=True)
 

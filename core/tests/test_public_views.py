@@ -41,7 +41,7 @@ def test_home_invalid_page_returns_404(client):
 @pytest.mark.django_db
 def test_home_empty_state(client):
     response = client.get("/")
-    assert "Aucun contenu pour le moment." in response.content.decode()
+    assert "Aucune réalisation" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -73,7 +73,9 @@ def test_category_page_shows_empty_state_without_achievements(client):
     category = EventCategory.objects.create(name="Vide")
     response = client.get(reverse("category_detail", args=[category.pk]))
     assert response.status_code == 200
-    assert "Aucune réalisation dans cette catégorie." in response.content.decode()
+    content = response.content.decode()
+    assert "Aucune réalisation" in content
+    assert "Cette catégorie est actuellement vide." in content
 
 
 @pytest.mark.django_db

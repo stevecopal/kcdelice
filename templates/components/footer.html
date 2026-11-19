@@ -4,12 +4,12 @@
      FOOTER
      ========================================================================= -->
 <footer class="bg-noir">
-  <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-[15px] py-14 sm:grid-cols-2 sm:px-[15px] lg:grid-cols-4">
+  <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
     <!-- Colonne 1 : Entreprise -->
     <div>
       <a href="{% url 'home' %}" class="flex items-center gap-3 group">
         {% if company and company.logo %}
-          <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-9 w-9 rounded-lg object-cover">
+          <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-9 w-9 rounded-full object-cover">
         {% else %}
           <span class="flex h-9 w-9 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
         {% endif %}
@@ -24,60 +24,14 @@
       </p>
     </div>
 
-    <!-- Colonne 2 : Navigation -->
-    <div>
-      <p class="mb-3 text-sm font-semibold text-blanc/60">{% trans 'Navigation' %}</p>
-      <ul class="space-y-2">
-        <li class="text-sm">
-          <a href="{% url 'home' %}" class="text-sm text-blanc/70 transition hover:text-blanc">{% trans 'Accueil' %}</a>
-        </li>
-        <li>
-          <a href="{% url 'home' %}" class="text-sm text-blanc/70 transition hover:text-blanc">{% trans 'Réalisations' %}</a>
-        </li>
-        <li>
-          <a href="{% url 'services' %}" class="text-sm text-blanc/70 transition hover:text-blanc">{% trans 'Services' %}</a>
-        </li>
-        <li>
-          <a href="{% url 'about' %}" class="text-sm text-blanc/70 transition hover:text-blanc">{% trans 'À propos' %}</a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Colonne 3 : Services -->
-    <div>
-      <p class="mb-3 text-sm font-semibold text-blanc/60">{% trans 'Services' %}</p>
-      <ul class="space-y-2 text-sm text-blanc/70">
-        <li><a href="{% url 'services' %}" class="transition hover:text-blanc">{% trans 'Décoration' %}</a></li>
-        <li><a href="{% url 'services' %}" class="transition hover:text-blanc">{% trans 'Mise en scène' %}</a></li>
-        <li><a href="{% url 'services' %}" class="transition hover:text-blanc">{% trans 'Luminaires' %}</a></li>
-        <li><a href="{% url 'services' %}" class="transition hover:text-blanc">{% trans 'Accueil guest' %}</a></li>
-      </ul>
-    </div>
-
-    <!-- Colonne 4 : Contact -->
-    <div>
-      <p class="mb-3 text-sm font-semibold text-blanc/60">{% trans 'Contact' %}</p>
-      <ul class="space-y-2 text-sm text-blanc/70">
-        {% if company %}
-          {% for phone in company.phone_list %}
-            <li><a href="tel:{{ phone }}" class="transition hover:text-blanc">{{ phone }}</a></li>
-          {% endfor %}
-          {% if company.whatsapp %}
-            <li><a href="https://wa.me/{{ company.whatsapp }}" class="transition hover:text-blanc">WhatsApp</a></li>
-          {% endif %}
-          {% if company.email %}
-            <li><a href="mailto:{{ company.email }}" class="transition hover:text-blanc">{{ company.email }}</a></li>
-          {% endif %}
-        {% endif %}
-      </ul>
-    </div>
+    
   </div>
 
   <!-- Barre inférieure : copyright -->
-  <div class="border-t border-blanc/10 mx-auto max-w-7xl px-[15px] py-4 sm:px-[15px]">
+  <div class=" mx-auto max-w-7xl px-[15px] py-4 sm:px-[15px]">
     <div class="flex flex-col items-center justify-between gap-2 text-sm text-blanc/50 sm:flex-row">
-      <p>&copy; {% now "Y" %} {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}.</p>
-      <p class="hidden text-blanc/40 sm:block">{% trans "Tous droits réservés." %}</p>
+      <p class=" text-blanc" >&copy; {% now "Y" %} {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}. </p>
+      <p class=" text-blanc sm:block">{% trans "Tous droits réservés." %}</p>
     </div>
   </div>
 </footer>

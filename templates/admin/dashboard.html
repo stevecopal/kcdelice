@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Tableau de bord" %}{% endblock %}
+
+{% block content %}
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold sm:text-3xl">{% trans "Tableau de bord" %}</h2>
+    <p class="mt-2 text-noir/70">
+      {% blocktrans with username=request.user.username %}Bonjour {{ username }}, voici l’état de votre site.{% endblocktrans %}
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for stat in stats %}
+      {% if stat.url %}
+        <a href="{% url stat.url %}" class="group rounded-2xl border border-noir/10 bg-blanc p-6 transition hover:border-vert">
+          <p class="text-sm font-medium text-noir/60">{{ stat.label }}</p>
+          <p class="mt-3 text-3xl font-bold">{{ stat.value }}</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-vert">
+            {% trans "Voir" %}
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" x2="19" y1="12" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+        </a>
+      {% else %}
+        <div class="rounded-2xl border border-noir/10 bg-blanc p-6">
+          <p class="text-sm font-medium text-noir/60">{{ stat.label }}</p>
+          <p class="mt-3 text-3xl font-bold">{{ stat.value }}</p>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <a href="{% url 'category_create' %}" class="rounded-2xl border border-noir/10 bg-blanc p-6 transition hover:border-vert">
+      <p class="font-semibold">{% trans "Ajouter un type d’événement" %}</p>
+      <p class="mt-1 text-sm text-noir/60">{% trans "Mariages, anniversaires, séminaires…" %}</p>
+    </a>
+    <a href="{% url 'achievement_create' %}" class="rounded-2xl border border-noir/10 bg-blanc p-6 transition hover:border-vert">
+      <p class="font-semibold">{% trans "Publier une réalisation" %}</p>
+      <p class="mt-1 text-sm text-noir/60">{% trans "Présentez un événement accompagné de ses photos." %}</p>
+    </a>
+  </div>
+{% endblock %}

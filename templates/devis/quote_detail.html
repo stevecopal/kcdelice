@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "admin/base.html" %}
+{% load i18n l10n %}
 
 {% block title %}{{ quote.title }} — {% trans "Devis" %}{% endblock %}
 
@@ -41,9 +41,9 @@
           {% for item in items %}
             <tr class="transition hover:bg-neutral-200/50">
               <td class="px-4 py-3 font-medium">{{ item.obj.label }}</td>
-              <td class="px-4 py-3 text-neutral-600">{{ item.obj.quantity }}</td>
-              <td class="px-4 py-3 text-neutral-600">{{ item.obj.unit_price }} FCFA</td>
-              <td class="px-4 py-3 font-medium">{{ item.total }} FCFA</td>
+              <td class="px-4 py-3 text-neutral-600">{{ item.obj.quantity|unlocalize }}</td>
+              <td class="px-4 py-3 text-neutral-600">{{ item.obj.unit_price|unlocalize }} FCFA</td>
+              <td class="px-4 py-3 font-medium">{{ item.total|unlocalize }} FCFA</td>
               <td class="px-4 py-3 text-right">
                 <form method="post" action="{% url 'quote_item_delete' item.obj.pk %}" class="inline">
                   {% csrf_token %}
@@ -56,7 +56,7 @@
         <tfoot class="bg-neutral-200/70">
           <tr>
             <td colspan="3" class="px-4 py-3 text-right font-medium text-neutral-600">{% trans "Total" %}</td>
-            <td class="px-4 py-3 text-lg font-semibold text-vert">{{ total }} FCFA</td>
+            <td class="px-4 py-3 text-lg font-semibold text-vert">{{ total|unlocalize }} FCFA</td>
             <td></td>
           </tr>
         </tfoot>

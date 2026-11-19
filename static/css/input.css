@@ -2,6 +2,7 @@
 @config "../../tailwind.config.js";
 @import "tailwindcss";
 
+@layer components {
 /* ==========================================================================
    GLOBALE
    ========================================================================== */
@@ -113,7 +114,7 @@ a:hover {
 
 /* Bouton principal */
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-vert px-7 py-3.5 text-sm font-semibold text-noir transition hover:opacity-90 active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-vert px-7 py-3.5 text-sm font-semibold text-blanc transition hover:opacity-90 active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
 }
 
 /* Bouton secondaire */
@@ -147,4 +148,4 @@ a:hover {
 .card-description {
   @apply mt-3 text-sm leading-relaxed text-noir/80;
 }
-
+}

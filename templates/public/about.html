@@ -75,4 +75,10 @@
       </section>
     {% endif %}
   </div>
+
+  {% if not company or not company.presentation and not company.mission and not company.vision and not company.location and not company.phone_list and not company.whatsapp and not company.email %}
+    <div class="rounded-2xl border border-dashed border-noir/20 bg-blanc px-6 py-14 text-center sm:col-span-2">
+      <p class="text-base text-noir/60">{% trans "Aucun contenu pour le moment." %}</p>
+    </div>
+  {% endif %}
 {% endblock %}

@@ -1,0 +1,79 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if object %}{% trans "Modifier la réalisation" %}{% else %}{% trans "Nouvelle réalisation" %}{% endif %}{% endblock %}
+
+{% block content %}
+  <nav class="mb-4 text-sm text-noir/60" aria-label="{% trans 'Fil d’ariane' %}">
+    <a href="{% url 'achievement_list' %}" class="font-medium hover:text-vert">{% trans "Réalisations" %}</a>
+    <span aria-hidden="true"> / </span>
+    {% if object %}{% trans "Modifier" %}{% else %}{% trans "Nouvelle" %}{% endif %}
+  </nav>
+
+  <h2 class="text-2xl font-bold sm:text-3xl">
+    {% if object %}{% trans "Modifier la réalisation" %}{% else %}{% trans "Nouvelle réalisation" %}{% endif %}
+  </h2>
+
+  <form method="post" enctype="multipart/form-data" class="mt-6 max-w-2xl" data-single-submit>
+    {% csrf_token %}
+    {% include "admin/includes/form_errors.html" %}
+
+    {% include "admin/includes/field.html" with field=form.title %}
+    {% include "admin/includes/field.html" with field=form.category %}
+    {% include "admin/includes/field.html" with field=form.is_active %}
+
+    <div class="mt-8 rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <h3 class="text-lg font-bold">{% trans "Images de la galerie" %}</h3>
+      <p class="mt-1 text-sm text-noir/60">
+        {% trans "Jusqu’à plusieurs photos par réalisation. Ajoutez un fichier pour chaque image." %}
+      </p>
+
+      {{ image_formset.management_form }}
+      {% if image_formset.non_form_errors %}
+        <div class="mt-4 rounded-xl bg-noir/5 px-4 py-3 text-sm font-medium text-noir">
+          {% for error in image_formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="mt-5 space-y-4">
+        {% for image_form in image_formset %}
+          <div class="rounded-xl border border-noir/10 p-4">
+            {{ image_form.id }}
+            <div class="flex flex-wrap items-start gap-4">
+              <div class="min-w-0 flex-1">
+                {% if image_form.instance.pk and image_form.instance.image %}
+                  <img src="{{ image_form.instance.image.url }}" alt="" class="mb-3 h-24 w-32 rounded-lg object-cover">
+                {% endif %}
+                <label for="{{ image_form.image.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+                  {% if image_form.instance.pk %}{% trans "Remplacer l’image" %}{% else %}{% trans "Nouvelle image" %} #{{ forloop.counter }}{% endif %}
+                </label>
+                {{ image_form.image }}
+                {% if image_form.image.errors %}
+                  <div class="mt-2 rounded-xl bg-noir/5 px-4 py-3 text-sm font-medium text-noir">
+                    {% for error in image_form.image.errors %}<p>{{ error }}</p>{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              {% if image_form.instance.pk %}
+                <div class="pt-8">
+                  <input type="checkbox" name="{{ image_form.DELETE.html_name }}"
+                         id="{{ image_form.DELETE.id_for_label }}"
+                         class="h-5 w-5 rounded border-noir/30 accent-vert"
+                         {% if image_form.DELETE.value %}checked{% endif %}>
+                  <label for="{{ image_form.DELETE.id_for_label }}" class="ml-2 text-sm font-medium text-noir">
+                    {% trans "Supprimer cette image" %}
+                  </label>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <button type="submit" class="btn-primary">{% trans "Enregistrer" %}</button>
+      <a href="{% url 'achievement_list' %}" class="btn-secondary">{% trans "Annuler" %}</a>
+    </div>
+  </form>
+{% endblock %}

@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "admin/base.html" %}
+{% load i18n l10n %}
 
 {% block title %}{% trans "Devis" %} — {% trans "Gestion" %}{% endblock %}
 
@@ -30,7 +30,7 @@
               <td class="px-4 py-3 text-neutral-600">
                 {% if quote.client_name %}{{ quote.client_name }}{% else %}—{% endif %}
               </td>
-              <td class="px-4 py-3 font-medium">{{ quote.total }} FCFA</td>
+              <td class="px-4 py-3 font-medium">{{ quote.total|unlocalize }} FCFA</td>
               <td class="px-4 py-3 text-neutral-500">{{ quote.updated_at|date:"d/m/Y" }}</td>
             </tr>
           {% endfor %}

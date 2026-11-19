@@ -10,7 +10,7 @@
   <body class="flex min-h-screen flex-col bg-blanc">
     {% include "components/navbar.html" %}
 
-    <main class="mx-auto w-full max-w-7xl flex-1 px-[15px] py-10 sm:px-[15px]">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-6 py-10 sm:px-6">
       {% block content %}{% endblock %}
     </main>
 
@@ -21,7 +21,7 @@
         {% for message in messages %}
           <div data-toast data-type="{{ message.tags|default:'info' }}"
                class="flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm font-medium shadow-lg
-               {% if 'success' in message.tags %}bg-vert text-noir
+               {% if 'success' in message.tags %}bg-vert text-blanc
                {% elif 'error' in message.tags %}bg-noir/90 text-blanc
                {% elif 'warning' in message.tags %}bg-noir/70 text-blanc
                {% else %}bg-noir/80 text-blanc{% endif %}">

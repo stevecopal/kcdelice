@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n %}
 
 {% block title %}{{ category.name }} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
 
@@ -74,8 +74,4 @@
   </div>
 
   {{ gallery_data|json_script:"gallery-data" }}
-{% endblock %}
-
-{% block extra_js %}
-  <script src="{% static 'js/gallery.js' %}" defer></script>
 {% endblock %}

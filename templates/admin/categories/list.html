@@ -1,0 +1,86 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Types d’événements" %}{% endblock %}
+
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold sm:text-3xl">{% trans "Types d’événements" %}</h2>
+      <p class="mt-2 text-noir/70">{% trans "Les catégories proposées sur votre site." %}</p>
+    </div>
+    <a href="{% url 'category_create' %}" class="btn-primary">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" />
+      </svg>
+      {% trans "Nouveau type" %}
+    </a>
+  </div>
+
+  <form method="get" class="mb-6 flex flex-wrap gap-3">
+    <input type="search" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher un type…' %}"
+           class="w-full max-w-xs rounded-xl border border-noir/20 bg-blanc px-4 py-3 text-noir placeholder:text-noir/50 focus:border-vert sm:w-72">
+    <button type="submit" class="btn-secondary">{% trans "Rechercher" %}</button>
+    {% if q %}
+      <a href="{% url 'category_list' %}" class="btn-text">{% trans "Réinitialiser" %}</a>
+    {% endif %}
+  </form>
+
+  {% if categories %}
+    <div class="overflow-hidden rounded-2xl border border-noir/10">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-noir/10 bg-noir/[0.03] text-xs font-semibold uppercase tracking-wide text-noir/60">
+            <tr>
+              <th class="px-5 py-3.5">{% trans "Nom" %}</th>
+              <th class="px-5 py-3.5">{% trans "Statut" %}</th>
+              <th class="px-5 py-3.5 text-right">{% trans "Actions" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-noir/10">
+            {% for category in categories %}
+              <tr class="transition hover:bg-noir/[0.03]">
+                <td class="px-5 py-4 font-medium">
+                  {% if category.cover_image %}
+                    <img src="{{ category.cover_image.url }}" alt="" class="mr-3 inline-block h-9 w-14 rounded-lg object-cover align-middle">
+                  {% endif %}
+                  <span class="align-middle">{{ category.name }}</span>
+                </td>
+                <td class="px-5 py-4">
+                  {% if category.is_active %}
+                    <span class="rounded-full bg-vert px-3 py-1 text-xs font-semibold text-blanc">{% trans "Active" %}</span>
+                  {% else %}
+                    <span class="rounded-full border border-noir/20 px-3 py-1 text-xs font-semibold text-noir/60">{% trans "Inactive" %}</span>
+                  {% endif %}
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                    <a href="{% url 'category_update' category.pk %}" class="font-medium text-vert hover:underline">{% trans "Modifier" %}</a>
+                    <form method="post" action="{% url 'category_toggle' category.pk %}">
+                      {% csrf_token %}
+                      <button type="submit" class="font-medium text-noir/70 hover:text-noir hover:underline">
+                        {% if category.is_active %}{% trans "Désactiver" %}{% else %}{% trans "Activer" %}{% endif %}
+                      </button>
+                    </form>
+                    <a href="{% url 'category_delete' category.pk %}" class="font-medium text-noir/70 hover:text-noir hover:underline">{% trans "Supprimer" %}</a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    {% if q %}
+      {% trans "Aucun type d’événement ne correspond à votre recherche." as empty_text %}
+      {% include "components/empty_state.html" with text=empty_text %}
+    {% else %}
+      <div class="rounded-2xl border border-dashed border-noir/20 bg-blanc px-6 py-14 text-center">
+        <p class="text-base text-noir/60">{% trans "Aucun type d’événement pour le moment." %}</p>
+        <a href="{% url 'category_create' %}" class="btn-primary mt-6 inline-flex">{% trans "Créer le premier" %}</a>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}

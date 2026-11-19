@@ -41,10 +41,10 @@ def test_quote_total_sums_items():
 def test_line_total_rounds_to_two_decimals():
     quote = Quote.objects.create(title="Arrondi")
     item = QuoteItem.objects.create(
-        quote=quote, label="Ligne", quantity=Decimal("3"), unit_price=Decimal("10.005")
+        quote=quote, label="Ligne", quantity=Decimal("1.5"), unit_price=Decimal("10.01")
     )
-    assert line_total(item) == Decimal("30.02")  # 30.015 → 30.02 (HALF_UP)
-    assert quote_total(quote) == Decimal("30.02")
+    assert line_total(item) == Decimal("15.02")  # 15.015 → 15.02 (HALF_UP)
+    assert quote_total(quote) == Decimal("15.02")
 
 
 @pytest.mark.django_db
@@ -60,5 +60,6 @@ def test_quote_item_defaults_and_str():
 def test_deleting_quote_removes_items():
     quote = Quote.objects.create(title="ASupprimer")
     QuoteItem.objects.create(quote=quote, label="Ligne")
+    quote_id = quote.pk
     quote.delete()
-    assert not QuoteItem.objects.filter(quote=quote).exists()
+    assert not QuoteItem.objects.filter(quote_id=quote_id).exists()

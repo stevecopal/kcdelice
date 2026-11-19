@@ -15,7 +15,6 @@ class QuoteDetailView(LoginRequiredMixin, DetailView):
     model = Quote
     template_name = "devis/quote_detail.html"
     context_object_name = "quote"
-    login_url = "admin:login"
 
     def get_queryset(self):
         return Quote.objects.prefetch_related("items")
@@ -36,7 +35,6 @@ class QuoteItemCreateView(LoginRequiredMixin, CreateView):
     model = QuoteItem
     form_class = QuoteItemForm
     template_name = "devis/quote_item_form.html"
-    login_url = "admin:login"
 
     def dispatch(self, request, *args, **kwargs):
         self.quote = get_object_or_404(Quote, pk=kwargs["pk"])
@@ -50,17 +48,21 @@ class QuoteItemCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse("quote_detail", kwargs={"pk": self.quote.pk})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["quote"] = self.quote
+        return context
+
 
 class QuoteItemDeleteView(LoginRequiredMixin, DeleteView):
     """Suppression d'une ligne de devis."""
 
     model = QuoteItem
     template_name = "devis/quote_item_confirm_delete.html"
-    login_url = "admin:login"
 
     def get_success_url(self):
         return reverse("quote_detail", kwargs={"pk": self.object.quote_id})
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, "Ligne supprimée.")
-        return super().delete(request, *args, **kwargs)
+    def form_valid(self, form):
+        messages.success(self.request, "Ligne supprimée.")
+        return super().form_valid(form)

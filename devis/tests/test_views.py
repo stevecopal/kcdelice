@@ -23,7 +23,7 @@ def auth_client(client, admin_user):
 def test_quote_list_requires_login(client):
     response = client.get("/devis/")
     assert response.status_code == 302
-    assert response["Location"].startswith("/admin/login/")
+    assert response["Location"].startswith("/connexion/")
     assert "next=/devis/" in response["Location"]
 
 
