@@ -45,7 +45,7 @@ class Company(models.Model):
             raise ValidationError("Une seule fiche entreprise est autorisée.")
 
     def save(self, *args, **kwargs) -> None:
-        if not self._state.adding and Company.objects.exclude(pk=self.pk).exists():
+        if Company.objects.exclude(pk=self.pk).exists():
             raise ValidationError("Une seule fiche entreprise est autorisée.")
         from ..services.image import optimize_image
 

@@ -21,7 +21,8 @@ def validate_image_size(image) -> None:
     try:
         if hasattr(image, "seek"):
             image.seek(0)
-        Image.verify(image)
+        img = Image.open(image)
+        img.verify()
         if hasattr(image, "seek"):
             image.seek(0)
     except (UnidentifiedImageError, OSError, ValueError):

@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
   </head>
   <body class="flex min-h-screen flex-col bg-white font-display text-noir">
-    <header class="sticky top-0 z-40 bg-white shadow-sm">
-      <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-[13px] py-3">
+    <header class="sticky top-0 z-40 bg-white">
+      <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-[13px] py-5">
         <a href="{% url 'home' %}" class="flex items-center gap-3">
           {% if company and company.logo %}
             <img src="{{ company.logo.url }}" alt="{% trans "Logo" %}" class="h-10 w-10 rounded-full object-cover">
@@ -18,14 +18,14 @@
           {% endif %}
           <span class="text-lg font-semibold">{% if company %}{{ company.name }}{% else %}{% trans "KC Délices" %}{% endif %}</span>
         </a>
-        <button type="button" data-nav-toggle class="rounded-lg bg-neutral-100 px-3 py-2 text-neutral-700 transition hover:bg-neutral-200 md:hidden" aria-label="{% trans "Menu" %}">☰</button>
+        <button type="button" data-nav-toggle class="rounded-lg  px-3 py-2 text-noir transition hover:bg-neutral-200 md:hidden" aria-label="{% trans "Menu" %}">☰</button>
         <nav class="hidden items-center gap-6 text-sm font-medium text-neutral-700 md:flex">
           <a href="{% url 'home' %}" class="transition hover:text-vert">{% trans "Réalisations" %}</a>
           <a href="{% url 'services' %}" class="transition hover:text-vert">{% trans "Services" %}</a>
           <a href="{% url 'about' %}" class="transition hover:text-vert">{% trans "À propos" %}</a>
         </nav>
       </div>
-      <nav data-nav-menu class="hidden flex-col gap-3 bg-white px-[13px] py-4 shadow-sm md:hidden">
+      <nav data-nav-menu class="hidden flex-col gap-3 bg-white px-[13px] py-4 md:hidden">
         <a href="{% url 'home' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "Réalisations" %}</a>
         <a href="{% url 'services' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "Services" %}</a>
         <a href="{% url 'about' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "À propos" %}</a>
@@ -36,7 +36,7 @@
       {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-neutral-100">
+    <footer class="bg-vert">
       <div class="mx-auto grid w-full max-w-6xl gap-8 px-[13px] py-10 sm:grid-cols-2">
         <div>
           <p class="text-lg font-semibold">{% if company %}{{ company.name }}{% else %}{% trans "KC Délices" %}{% endif %}</p>
@@ -45,7 +45,7 @@
           {% endif %}
         </div>
         <div class="text-sm text-neutral-600">
-          <p class="mb-2 font-semibold text-noir">{% trans "Contact" %}</p>
+          <p class="mb-2 font-semibold text-blanc">{% trans "Contact" %}</p>
           {% if company %}
             {% for phone in company.phone_list %}
               <p>{{ phone }}</p>
