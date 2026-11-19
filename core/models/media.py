@@ -33,6 +33,6 @@ class AchievementImage(models.Model):
     def save(self, *args, **kwargs) -> None:
         from ..services.image import optimize_image
 
-        if self.image:
+        if self.image and not getattr(self.image, "_committed", False):
             self.image = optimize_image(self.image)
         super().save(*args, **kwargs)

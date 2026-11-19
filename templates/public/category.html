@@ -10,29 +10,37 @@
     <span class="text-noir/80">{{ category.name }}</span>
   </nav>
 
-  <h1 class="mb-8 text-4xl font-bold leading-tight sm:text-5xl">{{ category.name }}</h1>
+  <p class="mb-8 max-w-2xl text-base leading-relaxed text-noir sm:text-lg">
+    {% blocktrans with name=category.name %}Un aperçu de nos plus belles créations en « {{ name }} ». Cliquez sur une realisation pour la découvrir en grand.{% endblocktrans %}
+  </p>
 
   {% if achievements %}
-    <div class="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-6">
+    {# Grille masonry : 2 colonnes mobile, 3 tablette, 4 desktop, cartes de hauteurs variées #}
+    <div class="columns-2 gap-3 sm:columns-3 lg:columns-4">
       {% for achievement in achievements %}
+        {# Alterne les hauteurs pour l'effet masonry (classes écrites en entier pour que Tailwind les détecte) #}
+        {% cycle 'h-48' 'h-72' 'h-56' 'h-80' 'h-60' 'h-64' as hauteur silent %}
+
         {% if achievement.images.all %}
           <button type="button" data-gallery-id="{{ achievement.id }}"
-                  class="group relative flex flex-col overflow-hidden rounded-2xl text-left shadow-sm transition hover:shadow-md">
+                  class="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-xl text-left shadow-sm transition duration-300 hover:scale-[1.02] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vert {{ hauteur }}">
             <img src="{{ achievement.images.all.0.image.url }}" alt="{{ achievement.title }}"
                  loading="lazy"
-                 class="h-56 w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+                 class="h-full w-full object-cover">
             {# Dégradé de lisibilité, couleurs de la config #}
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-transparent"></div>
-            <span class="absolute bottom-0 left-0 p-4 text-5xl font-extrabold leading-tight text-blanc drop-shadow-md sm:text-4xl">
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/80 via-noir/30 to-transparent"></div>
+            <span class="absolute bottom-0 left-0 w-full p-3 text-base font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-lg">
               {{ achievement.title }}
             </span>
           </button>
         {% else %}
-          <div class="relative flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm">
-            <div class="flex h-56 w-full items-center justify-center">
-              <span class="text-lg font-medium text-noir/50">{% trans "Aucune photo" %}</span>
+          <div class="relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-xl bg-noir/5 shadow-sm {{ hauteur }}">
+            <div class="flex h-full w-full items-center justify-center">
+              <span class="text-sm font-medium text-noir/50">{% trans "Aucune photo" %}</span>
             </div>
-            <span class="absolute bottom-5 left-6 right-6 text-lg font-semibold text-noir">{{ achievement.title }}</span>
+            <span class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-noir/80 to-transparent p-3 text-base font-bold leading-tight text-blanc sm:p-4 sm:text-lg">
+              {{ achievement.title }}
+            </span>
           </div>
         {% endif %}
       {% endfor %}
@@ -78,4 +86,7 @@
   </div>
 
   {{ gallery_data|json_script:"gallery-data" }}
+
+  {% blocktrans asvar wa_message with name=company.name event=category.name %}Bonjour {{ name }}, j'ai vu vos réalisations « {{ event }} » et je souhaite un devis pour mon événement.{% endblocktrans %}
+  {% include "components/whatsapp_float.html" with message=wa_message %}
 {% endblock %}

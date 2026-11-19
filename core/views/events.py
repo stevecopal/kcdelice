@@ -14,7 +14,7 @@ class CategoryListView(StaffRequiredMixin, ListView):
     """Liste des types d'événements : recherche et pagination."""
 
     model = EventCategory
-    template_name = "admin/categories/list.html"
+    template_name = "espace/categories/list.html"
     context_object_name = "categories"
     paginate_by = 10
 
@@ -35,7 +35,7 @@ class CategoryListView(StaffRequiredMixin, ListView):
 class CategoryCreateView(StaffRequiredMixin, CreateView):
     model = EventCategory
     form_class = EventCategoryForm
-    template_name = "admin/categories/form.html"
+    template_name = "espace/categories/form.html"
     success_url = reverse_lazy("category_list")
 
     def form_valid(self, form):
@@ -46,7 +46,7 @@ class CategoryCreateView(StaffRequiredMixin, CreateView):
 class CategoryUpdateView(StaffRequiredMixin, UpdateView):
     model = EventCategory
     form_class = EventCategoryForm
-    template_name = "admin/categories/form.html"
+    template_name = "espace/categories/form.html"
     success_url = reverse_lazy("category_list")
 
     def form_valid(self, form):
@@ -56,7 +56,7 @@ class CategoryUpdateView(StaffRequiredMixin, UpdateView):
 
 class CategoryDeleteView(StaffRequiredMixin, DeleteView):
     model = EventCategory
-    template_name = "admin/categories/confirm_delete.html"
+    template_name = "espace/categories/confirm_delete.html"
     success_url = reverse_lazy("category_list")
 
     def form_valid(self, form):

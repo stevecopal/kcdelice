@@ -3,35 +3,38 @@
 <!-- =========================================================================
      FOOTER
      ========================================================================= -->
-<footer class="bg-noir">
-  <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+<footer class=" bg-noir">
+  <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-3 sm:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1.2fr]">
+
     <!-- Colonne 1 : Entreprise -->
     <div>
-      <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+      <a href="{% url 'home' %}" class="flex items-center gap-3">
         {% if company and company.logo %}
-          <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-9 w-9 rounded-full object-cover">
+          <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-10 w-10 rounded-full object-cover ring-1 ring-blanc/20">
         {% else %}
-          <span class="flex h-9 w-9 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
         {% endif %}
-        <span class="text-base font-bold leading-tight text-blanc">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+        <span class="text-lg font-bold leading-tight text-blanc">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
       </a>
-      <p class="mt-4 text-sm leading-relaxed text-blanc/70">
+
+      <p class="mt-5 max-w-sm text-sm leading-relaxed text-blanc">
         {% if company and company.presentation %}
-          {{ company.presentation|truncatechars:130 }}
+          {{ company.presentation|truncatechars:170 }}
         {% else %}
-          {% trans "Édition de événements et réalisations d'exception." %}
+          {% trans "Édition d'événements et réalisations d'exception." %}
         {% endif %}
       </p>
+
+      <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 text-xs text-blanc/50 sm:flex-row sm:text-sm">
+      <p class="text-blanc" >&copy; {% now "Y" %} {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}.</p>
+      <p class="text-blanc">
+        {% trans "Développé par" %}
+        <a class="font-semibold text-vert transition hover:text-blanc" href="https://copal-satcheme.cohub.site" target="_blank" rel="noopener noreferrer">mr copal</a>
+      </p>
+    </div>
     </div>
 
     
-  </div>
 
-  <!-- Barre inférieure : copyright -->
-  <div class=" mx-auto max-w-7xl pb-6 px-6">
-    <div class="flex flex-col items-center justify-between gap-2 text-sm text-blanc/50 sm:flex-row">
-      <p class=" text-blanc" >&copy; {% now "Y" %} {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}. {% trans "Tous droits réservés." %} </p>
-      <p class=" text-blanc sm:block">{% trans "Développé par" %} <a class=" text-vert" href="https://copal-satcheme.cohub.site" target="_blank" class="hover:text-blanc line-height">mr copal</a> .</p>
-    </div>
-  </div>
+ 
 </footer>

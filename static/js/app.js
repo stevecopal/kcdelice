@@ -1,48 +1,61 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Menu mobile
-  const toggle = document.querySelector("[data-nav-toggle]");
-  const menu = document.querySelector("[data-nav-menu]");
-  if (toggle && menu) {
-    toggle.addEventListener("click", () => {
-      const isHidden = menu.classList.toggle("hidden");
-      menu.classList.toggle("flex");
-      toggle.setAttribute("aria-expanded", String(!isHidden));
-      toggle.setAttribute("aria-label", isHidden
-        ? "Ouvrir le menu"
-        : "Fermer le menu");
+  // --- Menu mobile (ouverture animée) ------------------------------------
+  const navToggle = document.querySelector("[data-nav-toggle]");
+  const navMenu = document.querySelector("[data-nav-menu]");
+
+  const setNavOpen = (open) => {
+    if (!navToggle || !navMenu) return;
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+    navMenu.classList.toggle("grid-rows-[1fr]", open);
+    navMenu.classList.toggle("grid-rows-[0fr]", !open);
+
+    // Hamburger → croix
+    const bars = navToggle.querySelectorAll("[data-nav-bar]");
+    if (bars.length === 3) {
+      bars[0].style.transform = open ? "translateY(7px) rotate(45deg)" : "";
+      bars[1].style.opacity = open ? "0" : "";
+      bars[2].style.transform = open ? "translateY(-7px) rotate(-45deg)" : "";
+    }
+  };
+
+  if (navToggle && navMenu) {
+    navToggle.addEventListener("click", () => {
+      setNavOpen(navToggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    navMenu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setNavOpen(false));
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setNavOpen(false);
     });
   }
 
-  // Fermeture au clic sur un lien
-  document.querySelectorAll("[data-nav-menu] a").forEach((link) => {
-    link.addEventListener("click", () => {
-      const menu = document.querySelector("[data-nav-menu]");
-      if (menu) {
-        menu.classList.add("hidden");
-        menu.classList.remove("flex");
-        const toggle = document.querySelector("[data-nav-toggle]");
-        if (toggle) {
-          toggle.setAttribute("aria-expanded", "false");
-          toggle.setAttribute("aria-label", "Ouvrir le menu");
-        }
-      }
-    });
-  });
+  // --- Description longue : lire plus / réduire ---------------------------
+  document.querySelectorAll("[data-readmore]").forEach((container) => {
+    const text = container.querySelector("[data-readmore-text]");
+    const button = container.querySelector("[data-readmore-toggle]");
+    const moreLabel = container.dataset.moreLabel || "Lire plus";
+    const lessLabel = container.dataset.lessLabel || "Réduire";
+    if (!text || !button) return;
 
-  // Fermeture avec Échap
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      const menu = document.querySelector("[data-nav-menu]");
-      const toggle = document.querySelector("[data-nav-toggle]");
-      if (menu) {
-        menu.classList.add("hidden");
-        menu.classList.remove("flex");
-      }
-      if (toggle) {
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.setAttribute("aria-label", "Ouvrir le menu");
-      }
+    // Le bouton n'apparaît que si le texte dépasse réellement le nombre de lignes.
+    text.classList.remove("line-clamp-3");
+    const fullHeight = text.clientHeight;
+    text.classList.add("line-clamp-3");
+    if (fullHeight <= text.clientHeight + 1) {
+      text.classList.remove("line-clamp-3");
+      return;
     }
+
+    button.classList.remove("hidden");
+    button.addEventListener("click", () => {
+      const expanded = text.classList.toggle("line-clamp-3") === false;
+      button.textContent = expanded ? lessLabel : moreLabel;
+      button.setAttribute("aria-expanded", String(expanded));
+    });
   });
 
   // Gallery
@@ -133,4 +146,62 @@ document.addEventListener("DOMContentLoaded", () => {
       touchStartX = null;
     }, { passive: true });
   }
+});
+
+// --- Demande de devis → WhatsApp -------------------------------------------
+// Le formulaire ne fait aucun aller-retour serveur : il compose un message
+// lisible et ouvre WhatsApp avec la demande déjà rédigée.
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("[data-quote-form]");
+  if (!form) return;
+
+  const error = form.querySelector("[data-quote-error]");
+
+  const showError = (message) => {
+    if (!error) return;
+    error.textContent = message;
+    error.hidden = false;
+  };
+
+  form.querySelectorAll("input, textarea").forEach((field) => {
+    field.addEventListener("input", () => {
+      if (error) error.hidden = true;
+    });
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const number = (form.dataset.waNumber || "").replace(/\D/g, "");
+    if (!number) {
+      showError("Le numéro WhatsApp de l'administrateur n'est pas configuré.");
+      return;
+    }
+
+    const data = new FormData(form);
+    const value = (key) => String(data.get(key) || "").trim();
+
+    const name = value("name");
+    const phone = value("phone");
+    const eventName = value("event");
+    const place = value("place");
+    const description = value("description");
+    const company = form.dataset.company || "KCDélices";
+
+    const lines = [
+      `Bonjour ${company}, je m'appelle ${name}.`,
+      `Je souhaite un devis pour : ${eventName}.`,
+      `Lieu de l'événement : ${place}.`,
+      `Téléphone : ${phone}.`,
+    ];
+    if (description) {
+      lines.push("", `Mon projet : ${description}`);
+    }
+
+    window.open(
+      `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`,
+      "_blank",
+      "noopener"
+    );
+  });
 });

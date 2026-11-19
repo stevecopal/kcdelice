@@ -1,3 +1,4 @@
+import re
 import uuid
 
 from django.core.exceptions import ValidationError
@@ -32,12 +33,28 @@ class Company(models.Model):
 
     @classmethod
     def get_solo(cls) -> Company | None:
-        """Méthode simple pour récupérer l'entreprise depuis vues et templates."""
-        return cls.objects.first()
+        """Méthode simple pour récupérer l'entreprise depuis vues et templates.
+
+        L'ordre est explicite afin que le site, le tableau de bord et l'admin
+        désignent toujours la même fiche, même si une ancienne base contient
+        plusieurs lignes.
+        """
+        return cls.objects.order_by("created_at", "pk").first()
 
     @property
     def phone_list(self) -> list[str]:
         return [str(phone) for phone in (self.phones or []) if phone]
+
+    @property
+    def whatsapp_digits(self) -> str:
+        """Numéro utilisable dans un lien wa.me (chiffres uniquement).
+
+        Le numéro WhatsApp dédié est prioritaire ; à défaut, le premier
+        téléphone de contact sert de destinataire.
+        """
+        raw = self.whatsapp or (self.phone_list[0] if self.phone_list else "")
+        digits = re.sub(r"\D", "", str(raw))
+        return digits[2:] if digits.startswith("00") else digits
 
     def clean(self) -> None:
         super().clean()
@@ -50,6 +67,8 @@ class Company(models.Model):
             raise ValidationError("Une seule fiche entreprise est autorisée.")
         from ..services.image import optimize_image
 
-        if self.logo:
+        # Ne retraiter le fichier que lors d'un nouvel envoi : une simple
+        # sauvegarde (depuis /espace/ ou /admin/) ne doit pas réécrire le logo.
+        if self.logo and not getattr(self.logo, "_committed", False):
             self.logo = optimize_image(self.logo)
         super().save(*args, **kwargs)

@@ -8,7 +8,7 @@ from .mixins import StaffRequiredMixin
 class DashboardView(StaffRequiredMixin, TemplateView):
     """Tableau de bord : indicateurs simples sur les données réelles."""
 
-    template_name = "admin/dashboard.html"
+    template_name = "espace/dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

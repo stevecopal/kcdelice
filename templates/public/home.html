@@ -28,7 +28,7 @@
             {% endif %}
             {# Dégradé de lisibilité, couleurs de la config #}
             <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-transparent"></div>
-            <span class="absolute bottom-0 left-0 p-3 text-sm font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-base">
+            <span class="absolute bottom-0 left-0 p-3 text-2xl font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-3xl">
               {{ category.name }}
             </span>
           </a>
@@ -42,4 +42,7 @@
       </div>
     {% endif %}
   </section>
+
+  {% blocktrans asvar wa_message with name=company.name %}Bonjour {{ name }}, j'ai vu vos réalisations et je souhaite un devis pour mon événement.{% endblocktrans %}
+  {% include "components/whatsapp_float.html" with message=wa_message %}
 {% endblock %}

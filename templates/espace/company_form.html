@@ -1,4 +1,4 @@
-{% extends "admin/base.html" %}
+{% extends "espace/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Entreprise" %}{% endblock %}
@@ -11,7 +11,7 @@
 
   <form method="post" enctype="multipart/form-data" class="max-w-2xl" data-single-submit>
     {% csrf_token %}
-    {% include "admin/includes/form_errors.html" %}
+    {% include "espace/includes/form_errors.html" %}
 
     {% for field in form %}
       {% if field.name == "logo" %}
@@ -31,7 +31,7 @@
           {% endif %}
         </div>
       {% else %}
-        {% include "admin/includes/field.html" %}
+        {% include "espace/includes/field.html" %}
       {% endif %}
     {% endfor %}
 

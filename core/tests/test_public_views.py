@@ -115,10 +115,10 @@ def test_services_page_paginates(client):
 
 
 @pytest.mark.django_db
-def test_about_page_shows_only_renamed_sections(client):
+def test_about_page_uses_company_content_over_default(client):
     Company.objects.create(
         name="KC",
-        presentation="Bienvenue chez nous.",
+        presentation="Bienvenue chez nous.\n\nDeuxième paragraphe.",
         mission="",
         vision="Voir loin.",
     )
@@ -126,16 +126,23 @@ def test_about_page_shows_only_renamed_sections(client):
     content = response.content.decode()
     assert response.status_code == 200
     assert "Bienvenue chez nous." in content
+    assert "Deuxième paragraphe." in content
     assert "Voir loin." in content
-    assert "<h2" in content
-    assert content.count("<h2") == 2  # présentation + vision, pas de mission vide
+    # Présentation, vision, mission et demande de devis.
+    assert content.count("<h2") == 4
+    assert "Notre mission est de transformer" in content
 
 
 @pytest.mark.django_db
-def test_about_page_without_company_shows_empty_state(client):
+def test_about_page_without_company_uses_default_content(client):
     response = client.get("/a-propos/")
+    content = response.content.decode()
     assert response.status_code == 200
-    assert "Aucun contenu pour le moment." in response.content.decode()
+    assert "Depuis 2015, KCDélices imagine" in content
+    assert "Notre mission est de transformer" in content
+    assert "Devenir la référence" in content
+    # Aucune coordonnée : les sections éditoriales et le formulaire de devis.
+    assert content.count("<h2") == 4
 
 
 @pytest.mark.django_db
@@ -146,6 +153,26 @@ def test_about_page_contact_section_lists_phones(client):
     assert "+237 600" in content
     assert "+237 610" in content
     assert "Douala" in content
+
+
+@pytest.mark.django_db
+def test_about_page_quote_form_targets_company_whatsapp(client):
+    Company.objects.create(name="KC", whatsapp="+237 699 00 00 00")
+    content = client.get("/a-propos/").content.decode()
+
+    for field in ('name="name"', 'name="phone"', 'name="event"', 'name="place"', 'name="description"'):
+        assert field in content
+    # Le numéro est normalisé pour les liens wa.me.
+    assert 'data-wa-number="237699000000"' in content
+    assert "https://wa.me/237699000000" in content
+
+
+@pytest.mark.django_db
+def test_services_and_realisations_expose_whatsapp_button(client):
+    Company.objects.create(name="KC", whatsapp="+237 699 00 00 00")
+    for url in ("/", "/services/"):
+        content = client.get(url).content.decode()
+        assert "https://wa.me/237699000000" in content
 
 
 def test_error_templates_render():

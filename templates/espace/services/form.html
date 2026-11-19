@@ -1,4 +1,4 @@
-{% extends "admin/base.html" %}
+{% extends "espace/base.html" %}
 {% load i18n %}
 
 {% block title %}{% if object %}{% trans "Modifier le service" %}{% else %}{% trans "Nouveau service" %}{% endif %}{% endblock %}
@@ -16,9 +16,9 @@
 
   <form method="post" enctype="multipart/form-data" class="mt-6 max-w-xl" data-single-submit>
     {% csrf_token %}
-    {% include "admin/includes/form_errors.html" %}
+    {% include "espace/includes/form_errors.html" %}
 
-    {% include "admin/includes/field.html" with field=form.title %}
+    {% include "espace/includes/field.html" with field=form.title %}
 
     <div class="mb-5">
       <span class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Image de couverture" %}</span>
@@ -36,8 +36,8 @@
       {% endif %}
     </div>
 
-    {% include "admin/includes/field.html" with field=form.description %}
-    {% include "admin/includes/field.html" with field=form.is_active %}
+    {% include "espace/includes/field.html" with field=form.description %}
+    {% include "espace/includes/field.html" with field=form.is_active %}
 
     <div class="mt-8 flex flex-wrap gap-3">
       <button type="submit" class="btn-primary">{% trans "Enregistrer" %}</button>

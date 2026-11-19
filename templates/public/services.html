@@ -12,19 +12,35 @@
   </section>
 
   {% if services %}
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {% for service in services %}
-        <article class="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-md">
-          {% if service.cover_image %}
-            <div class="aspect-[16/10] overflow-hidden">
+        <article class="group flex flex-col overflow-hidden rounded-2xl bg-blanc shadow-sm ring-1 ring-noir/5 transition hover:shadow-md">
+          {# Visuel + titre en surimpression, comme sur la page réalisations #}
+          <div class="relative h-56 w-full overflow-hidden">
+            {% if service.cover_image %}
               <img src="{{ service.cover_image.url }}" alt="{{ service.title }}"
-                   class="h-full w-full object-cover transition duration-500 hover:scale-105">
-            </div>
-          {% endif %}
-          <div class="p-6">
-            <h2 class="card-title">{{ service.title }}</h2>
+                   loading="lazy"
+                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+            {% else %}
+              <div class="h-full w-full bg-gradient-to-br from-noir via-noir/90 to-noir/70"></div>
+            {% endif %}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/40 to-transparent"></div>
+            <h2 class="absolute bottom-0 left-0 w-full p-5 text-2xl font-extrabold leading-tight text-blanc drop-shadow-md sm:text-3xl">
+              {{ service.title }}
+            </h2>
+          </div>
+
+          <div class="flex flex-1 flex-col p-6" data-readmore
+               data-more-label="{% trans 'Lire plus' %}"
+               data-less-label="{% trans 'Réduire' %}">
             {% if service.description %}
-              <p class="mt-3 card-description">{{ service.description }}</p>
+              <p class="card-description line-clamp-3" data-readmore-text>{{ service.description }}</p>
+              <button type="button"
+                      data-readmore-toggle
+                      aria-expanded="false"
+                      class="mt-3 hidden self-start text-sm font-semibold text-vert transition hover:underline">
+                {% trans "Lire plus" %}
+              </button>
             {% endif %}
           </div>
         </article>
@@ -37,4 +53,7 @@
       <p class="mt-3 text-lg text-noir/60">{% trans "Nos prestations viendront s'ajouter bientôt à cette liste." %}</p>
     </div>
   {% endif %}
+
+  {% blocktrans asvar wa_message with name=company.name %}Bonjour {{ name }}, je souhaite des informations sur vos services pour mon événement.{% endblocktrans %}
+  {% include "components/whatsapp_float.html" with message=wa_message %}
 {% endblock %}

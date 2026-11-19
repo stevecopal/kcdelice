@@ -7,10 +7,13 @@ from .models import Achievement, AchievementImage, Company, EventCategory, Servi
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     form = CompanyForm
+    # Tous les champs sont exposés : la fiche entreprise doit être identique
+    # qu'elle soit modifiée depuis /espace/entreprise/ ou depuis /admin/.
     fieldsets = (
         ("Identité", {"fields": ("name", "logo")}),
         ("Présentation", {"fields": ("presentation", "mission", "vision")}),
         ("Contact", {"fields": ("location", "phones", "whatsapp", "email")}),
+        ("Réseaux sociaux", {"fields": ("social_links",)}),
     )
 
     def has_add_permission(self, request):

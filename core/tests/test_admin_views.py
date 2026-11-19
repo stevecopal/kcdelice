@@ -5,7 +5,7 @@ import pytest
 from core.forms import CompanyForm
 from core.models import Achievement, Company, EventCategory, Service
 
-from .factories import make_image
+from .factories import image_bytes, make_image
 
 
 @pytest.fixture
@@ -150,6 +150,134 @@ def test_admin_company_cannot_be_added_twice(auth_client):
     company.refresh_from_db()
     assert company.phones == ["+237 600 000 000", "+237 611 111 111"]
     assert company.location == "Douala"
+
+
+@pytest.mark.django_db
+def test_company_admin_form_exposes_every_field(auth_client):
+    """L'admin doit montrer les mêmes champs que le dashboard (dont les réseaux)."""
+    company = Company.objects.create(name="KC")
+    html = auth_client.get(f"/admin/core/company/{company.pk}/change/").content.decode()
+    for field in (
+        "name",
+        "logo",
+        "presentation",
+        "mission",
+        "vision",
+        "location",
+        "phones",
+        "whatsapp",
+        "email",
+        "social_links",
+    ):
+        assert f'name="{field}"' in html
+
+
+@pytest.mark.django_db
+def test_company_saved_in_dashboard_then_admin_keeps_logo_and_links(auth_client, media_root):
+    """Un enregistrement dans /admin/ ne doit rien perdre de ce qui vient de /espace/."""
+    response = auth_client.post(
+        "/espace/entreprise/",
+        {
+            "name": "KCDélices",
+            "presentation": "Depuis le dashboard.",
+            "mission": "",
+            "vision": "",
+            "location": "Douala",
+            "phones": "+237 600 000 000",
+            "whatsapp": "600000000",
+            "email": "contact@kc.cm",
+            "social_links": "Facebook | https://facebook.com/kcdelice",
+            "logo": make_image(name="logo.png", fmt="PNG"),
+        },
+    )
+    assert response.status_code == 302
+    company = Company.get_solo()
+    logo_name = company.logo.name
+
+    response = auth_client.post(
+        f"/admin/core/company/{company.pk}/change/",
+        {
+            "name": "KCDélices",
+            "presentation": "Depuis l'admin.",
+            "mission": "",
+            "vision": "",
+            "location": "Douala",
+            "phones": "+237 600 000 000",
+            "whatsapp": "600000000",
+            "email": "contact@kc.cm",
+            "social_links": "Facebook | https://facebook.com/kcdelice",
+            "_save": "Enregistrer",
+        },
+    )
+    assert response.status_code == 302
+    company.refresh_from_db()
+    assert company.presentation == "Depuis l'admin."
+    assert company.logo.name == logo_name
+    assert company.social_links == [
+        {"label": "Facebook", "url": "https://facebook.com/kcdelice"}
+    ]
+
+
+@pytest.mark.django_db
+def test_company_created_in_admin_then_dashboard_keeps_logo_and_links(auth_client, media_root):
+    """Et inversement : /espace/ ne doit pas écraser ce qui vient de /admin/."""
+    response = auth_client.post(
+        "/admin/core/company/add/",
+        {
+            "name": "KCDélices",
+            "presentation": "Depuis l'admin.",
+            "mission": "",
+            "vision": "",
+            "location": "Yaoundé",
+            "phones": "+237 611 111 111",
+            "whatsapp": "611111111",
+            "email": "admin@kc.cm",
+            "social_links": "Instagram | https://instagram.com/kcdelice",
+            "logo": make_image(name="admin-logo.png", fmt="PNG"),
+        },
+    )
+    assert response.status_code == 302
+    company = Company.get_solo()
+    logo_name = company.logo.name
+
+    response = auth_client.post(
+        "/espace/entreprise/",
+        {
+            "name": "KCDélices",
+            "presentation": "Depuis le dashboard.",
+            "mission": "",
+            "vision": "",
+            "location": "Yaoundé",
+            "phones": "+237 611 111 111",
+            "whatsapp": "611111111",
+            "email": "admin@kc.cm",
+            "social_links": "Instagram | https://instagram.com/kcdelice",
+        },
+    )
+    assert response.status_code == 302
+    company.refresh_from_db()
+    assert company.presentation == "Depuis le dashboard."
+    assert company.logo.name == logo_name
+    assert company.social_links == [
+        {"label": "Instagram", "url": "https://instagram.com/kcdelice"}
+    ]
+
+
+@pytest.mark.django_db
+def test_company_save_does_not_rewrite_an_existing_logo(auth_client, media_root):
+    """Une sauvegarde sans nouvel envoi ne réenregistre pas le fichier existant."""
+    folder = media_root / "company"
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "wide.png").write_bytes(image_bytes(size=(2000, 100), fmt="PNG"))
+
+    company = Company.objects.create(name="KC")
+    company.logo.name = "company/wide.png"
+    company.name = "KC bis"
+    company.save()
+    company.refresh_from_db()
+
+    assert company.logo.name == "company/wide.png"
+    assert sorted(p.name for p in folder.iterdir()) == ["wide.png"]
 
 
 @pytest.mark.django_db

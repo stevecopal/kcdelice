@@ -12,7 +12,7 @@ from .mixins import StaffRequiredMixin
 class ClientsView(StaffRequiredMixin, TemplateView):
     """Gestion des clients : écran d'attente propre (phase 3)."""
 
-    template_name = "admin/placeholder.html"
+    template_name = "espace/placeholder.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,7 +26,7 @@ class ClientsView(StaffRequiredMixin, TemplateView):
 class SettingsView(StaffRequiredMixin, PasswordChangeView):
     """Paramètres : changement du mot de passe du compte."""
 
-    template_name = "admin/settings.html"
+    template_name = "espace/settings.html"
     form_class = StyledPasswordChangeForm
     success_url = reverse_lazy("settings")
 

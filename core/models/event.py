@@ -30,6 +30,6 @@ class EventCategory(models.Model):
     def save(self, *args, **kwargs) -> None:
         from ..services.image import optimize_image
 
-        if self.cover_image:
+        if self.cover_image and not getattr(self.cover_image, "_committed", False):
             self.cover_image = optimize_image(self.cover_image)
         super().save(*args, **kwargs)

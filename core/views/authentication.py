@@ -13,7 +13,7 @@ LOGIN_INPUT_CLASSES = (
 class LoginView(DjangoLoginView):
     """Connexion à l'espace d'administration (nom d'utilisateur + mot de passe)."""
 
-    template_name = "admin/login.html"
+    template_name = "espace/login.html"
     redirect_authenticated_user = True
 
     def get_form(self, form_class=None):
@@ -38,4 +38,4 @@ class LoginView(DjangoLoginView):
 class LogoutView(DjangoLogoutView):
     """Déconnexion puis retour à la page de connexion."""
 
-    template_name = "admin/login.html"
+    template_name = "espace/login.html"

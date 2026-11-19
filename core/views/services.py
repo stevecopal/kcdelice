@@ -25,7 +25,7 @@ class ServiceListView(StaffRequiredMixin, ListView):
     """Liste des services : recherche et pagination."""
 
     model = Service
-    template_name = "admin/services/list.html"
+    template_name = "espace/services/list.html"
     context_object_name = "services"
     paginate_by = 10
 
@@ -46,7 +46,7 @@ class ServiceListView(StaffRequiredMixin, ListView):
 class ServiceCreateView(StaffRequiredMixin, CreateView):
     model = Service
     form_class = ServiceForm
-    template_name = "admin/services/form.html"
+    template_name = "espace/services/form.html"
     success_url = reverse_lazy("service_list")
 
     def form_valid(self, form):
@@ -57,7 +57,7 @@ class ServiceCreateView(StaffRequiredMixin, CreateView):
 class ServiceUpdateView(StaffRequiredMixin, UpdateView):
     model = Service
     form_class = ServiceForm
-    template_name = "admin/services/form.html"
+    template_name = "espace/services/form.html"
     success_url = reverse_lazy("service_list")
 
     def form_valid(self, form):
@@ -67,7 +67,7 @@ class ServiceUpdateView(StaffRequiredMixin, UpdateView):
 
 class ServiceDeleteView(StaffRequiredMixin, DeleteView):
     model = Service
-    template_name = "admin/services/confirm_delete.html"
+    template_name = "espace/services/confirm_delete.html"
     success_url = reverse_lazy("service_list")
 
     def form_valid(self, form):

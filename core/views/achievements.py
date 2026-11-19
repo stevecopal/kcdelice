@@ -50,7 +50,7 @@ class AchievementListView(StaffRequiredMixin, ListView):
     """Liste des réalisations : recherche, filtre par catégorie, pagination."""
 
     model = Achievement
-    template_name = "admin/achievements/list.html"
+    template_name = "espace/achievements/list.html"
     context_object_name = "achievements"
     paginate_by = 10
 
@@ -81,7 +81,7 @@ class AchievementListView(StaffRequiredMixin, ListView):
 class AchievementFormsetMixin:
     """Ajoute le formset d'images (création et édition) au formulaire."""
 
-    template_name = "admin/achievements/form.html"
+    template_name = "espace/achievements/form.html"
 
     def get_image_instance(self):
         return getattr(self, "object", None) or Achievement()
@@ -141,7 +141,7 @@ class AchievementUpdateView(AchievementFormsetMixin, StaffRequiredMixin, UpdateV
 
 class AchievementDeleteView(StaffRequiredMixin, DeleteView):
     model = Achievement
-    template_name = "admin/achievements/confirm_delete.html"
+    template_name = "espace/achievements/confirm_delete.html"
     success_url = reverse_lazy("achievement_list")
 
     def form_valid(self, form):
