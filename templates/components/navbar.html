@@ -1,0 +1,62 @@
+{% load i18n static %}
+
+<!-- =========================================================================
+     NA BAR PRIVATE (navbar)
+     ========================================================================= -->
+<header class="sticky top-0 z-40 border-b border-noir/10 bg-blanc">
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-[15px] py-4">
+    <a href="{% url 'home' %}" class="flex items-center gap-3 group" aria-label="{% trans 'KCDélices - Accueil' %}">
+      {% if company and company.logo %}
+        <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-10 w-10 rounded-lg object-cover transition group-hover:scale-105">
+      {% else %}
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
+      {% endif %}
+      <span class="text-lg font-bold leading-tight text-noir">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+    </a>
+
+    <!-- Bouton menu mobile -->
+    <button type="button"
+            class="flex h-11 w-11 items-center justify-center rounded-lg text-noir transition hover:bg-noir/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-vert md:hidden"
+            aria-label="{% trans 'Ouvrir le menu' %}"
+            aria-expanded="false"
+            aria-controls="mobile-navbar">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" x2="21" y1="6" y2="6" />
+        <line x1="3" x2="21" y1="12" y2="12" />
+        <line x1="3" x2="21" y1="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Navigation mobile -->
+  <nav id="mobile-navbar"
+       class="mx-auto max-w-7xl space-y-1 px-[15px] pt-3 pb-6 md:hidden"
+       aria-label="{% trans 'Navigation principale' %}">
+    <a href="{% url 'home' %}"
+       class="flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-noir transition hover:bg-noir/10 {% if request.path == '/' %}bg-noir/10 text-vert{% endif %}">
+      <svg class="h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9h18M3 15h18" />
+        <path d="M9 3v18" />
+      </svg>
+      {% trans 'Réalisations' %}
+    </a>
+    <a href="{% url 'services' %}"
+       class="flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-noir transition hover:bg-noir/10 {% if request.path == '/services/' %}bg-noir/10 text-vert{% endif %}">
+      <svg class="h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </svg>
+      {% trans 'Services' %}
+    </a>
+    <a href="{% url 'about' %}"
+       class="flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-noir transition hover:bg-noir/10 {% if request.path == '/about/' %}bg-noir/10 text-vert{% endif %}">
+      <svg class="h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="4" />
+      </svg>
+      {% trans 'À propos' %}
+    </a>
+  </nav>
+</header>

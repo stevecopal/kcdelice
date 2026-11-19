@@ -4,69 +4,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}</title>
+    <title>{% block title %}{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %} — {% trans "KCDélices" %}</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
   </head>
-  <body class="flex min-h-screen flex-col bg-white font-display text-noir">
-    <header class="sticky top-0 z-40 bg-white">
-      <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-[13px] py-5">
-        <a href="{% url 'home' %}" class="flex items-center gap-3">
-          {% if company and company.logo %}
-            <img src="{{ company.logo.url }}" alt="{% trans "Logo" %}" class="h-10 w-10 rounded-full object-cover">
-          {% else %}
-            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert font-semibold text-white">K</span>
-          {% endif %}
-          <span class="text-lg font-semibold">{% if company %}{{ company.name }}{% else %}{% trans "KC Délices" %}{% endif %}</span>
-        </a>
-        <button type="button" data-nav-toggle class="rounded-lg  px-3 py-2 text-noir transition hover:bg-neutral-200 md:hidden" aria-label="{% trans "Menu" %}">☰</button>
-        <nav class="hidden items-center gap-6 text-sm font-medium text-neutral-700 md:flex">
-          <a href="{% url 'home' %}" class="transition hover:text-vert">{% trans "Réalisations" %}</a>
-          <a href="{% url 'services' %}" class="transition hover:text-vert">{% trans "Services" %}</a>
-          <a href="{% url 'about' %}" class="transition hover:text-vert">{% trans "À propos" %}</a>
-        </nav>
-      </div>
-      <nav data-nav-menu class="hidden flex-col gap-3 bg-white px-[13px] py-4 md:hidden">
-        <a href="{% url 'home' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "Réalisations" %}</a>
-        <a href="{% url 'services' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "Services" %}</a>
-        <a href="{% url 'about' %}" class="font-medium text-neutral-700 transition hover:text-vert">{% trans "À propos" %}</a>
-      </nav>
-    </header>
+  <body class="flex min-h-screen flex-col bg-blanc">
+    {% include "components/navbar.html" %}
 
-    <main class="mx-auto w-full max-w-6xl flex-1 px-[13px] py-10">
+    <main class="mx-auto w-full max-w-7xl flex-1 px-[15px] py-10 sm:px-[15px]">
       {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-vert">
-      <div class="mx-auto grid w-full max-w-6xl gap-8 px-[13px] py-10 sm:grid-cols-2">
-        <div>
-          <p class="text-lg font-semibold">{% if company %}{{ company.name }}{% else %}{% trans "KC Délices" %}{% endif %}</p>
-          {% if company and company.location %}
-            <p class="mt-2 text-sm text-neutral-600">{% trans "Localisation" %} : {{ company.location }}</p>
-          {% endif %}
-        </div>
-        <div class="text-sm text-neutral-600">
-          <p class="mb-2 font-semibold text-blanc">{% trans "Contact" %}</p>
-          {% if company %}
-            {% for phone in company.phone_list %}
-              <p>{{ phone }}</p>
-            {% endfor %}
-            {% if company.whatsapp %}<p>WhatsApp : {{ company.whatsapp }}</p>{% endif %}
-            {% if company.email %}<p>{{ company.email }}</p>{% endif %}
-          {% endif %}
-        </div>
-      </div>
-    </footer>
+    {% include "components/footer.html" %}
 
     {% if messages %}
       <div id="toast-container" class="fixed top-4 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2">
         {% for message in messages %}
-          <div data-toast data-type="{{ message.tags|default:'info' }}" class="flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm font-medium shadow-lg
-            {% if 'success' in message.tags %}bg-vert text-noir
-            {% elif 'error' in message.tags %}bg-red-600 text-white
-            {% elif 'warning' in message.tags %}bg-amber-500 text-noir
-            {% else %}bg-noir text-white{% endif %}">
+          <div data-toast data-type="{{ message.tags|default:'info' }}"
+               class="flex items-start justify-between gap-3 rounded-xl px-4 py-3 text-sm font-medium shadow-lg
+               {% if 'success' in message.tags %}bg-vert text-noir
+               {% elif 'error' in message.tags %}bg-noir/90 text-blanc
+               {% elif 'warning' in message.tags %}bg-noir/70 text-blanc
+               {% else %}bg-noir/80 text-blanc{% endif %}">
             <span>{{ message }}</span>
-            <button type="button" data-toast-close aria-label="{% trans "Fermer" %}" class="font-bold">✕</button>
+            <button type="button" data-toast-close aria-label="{% trans "Fermer" %}" class="font-bold text-blanc/70 transition hover:text-blanc">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" x2="6" y1="6" y2="18" />
+                <line x1="6" x2="18" y1="6" y2="18" />
+              </svg>
+            </button>
           </div>
         {% endfor %}
       </div>

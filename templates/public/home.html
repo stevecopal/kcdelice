@@ -4,26 +4,38 @@
 {% block title %}{% trans "Réalisations" %} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
 
 {% block content %}
-  <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "Nos réalisations" %}</h1>
+  <section class="mb-12">
+    <h1 class="mb-4 text-4xl font-bold leading-tight sm:text-5xl">{% trans "Nos réalisations" %}</h1>
+    <p class="mb-10 max-w-2xl text-lg leading-relaxed text-noir/70">
+      {% trans "Des créations soignées pour des événements inoubliables : décoration, mise en scène et accueil d'exception." %}
+    </p>
 
-  {% if categories %}
-    <div class="grid grid-cols-1 gap-[5px] sm:grid-cols-2 lg:grid-cols-3">
-      {% for category in categories %}
-        <a href="{% url 'category_detail' category.pk %}"
-           class="group relative block overflow-hidden rounded-3xl {% if forloop.counter0|divisibleby:2 %}aspect-[4/5]{% else %}aspect-[16/10] lg:mt-8{% endif %}">
-          {% if category.cover_image %}
-            <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
-                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
-          {% else %}
-            <div class="flex h-full w-full items-center justify-center bg-neutral-200 text-neutral-500">{% trans "Aucune image" %}</div>
-          {% endif %}
-          <div class="absolute inset-0 bg-gradient-to-t from-noir/85 via-noir/20 to-transparent"></div>
-          <span class="absolute bottom-4 left-4 right-4 text-lg font-medium text-white">{{ category.name }}</span>
-        </a>
-      {% endfor %}
-    </div>
-    {% include "components/pagination.html" %}
-  {% else %}
-    {% include "components/empty_state.html" %}
-  {% endif %}
+    {% if categories %}
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {% for category in categories %}
+          <a href="{% url 'category_detail' category.pk %}"
+             class="group relative flex flex-col overflow-hidden rounded-3xl shadow-sm transition hover:shadow-md">
+            {% if category.cover_image %}
+              <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
+                   class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
+            {% else %}
+              <div class="flex h-56 w-full items-center justify-center rounded-3xl bg-noir/10">
+                <span class="text-lg font-medium text-noir/50">{% trans "Aucune image" %}</span>
+              </div>
+            {% endif %}
+            <div class="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/20 to-transparent"></div>
+            <div class="absolute bottom-5 left-6 right-6">
+              <span class="text-lg font-semibold text-blanc">{{ category.name }}</span>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+      {% include "components/pagination.html" %}
+    {% else %}
+      <div class="rounded-3xl bg-noir/5 p-10 text-center">
+        <p class="text-5xl font-bold text-noir/30">{% trans "Aucune réalisation" %}</p>
+        <p class="mt-3 text-lg text-noir/60">{% trans "Dès que nous publions nos dernières créations, elles apparaîtront ici." %}</p>
+      </div>
+    {% endif %}
+  </section>
 {% endblock %}

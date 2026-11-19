@@ -4,52 +4,75 @@
 {% block title %}{% trans "À propos" %} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
 
 {% block content %}
-  <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "À propos" %}</h1>
+  <section class="mb-12">
+    <h1 class="mb-3 text-4xl font-bold leading-tight sm:text-5xl">{% trans "À propos" %}</h1>
+    <p class="mb-10 max-w-2xl text-lg leading-relaxed text-noir/70">
+      {% trans "Une équipe passionnée, dédiée à la réalisation d'événements d'exception depuis 2015." %}
+    </p>
+  </section>
 
-  {% if company %}
-    <div class="grid gap-[5px]">
-      {% if company.presentation %}
-        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
-          <h2 class="mb-3 text-2xl font-semibold">{% trans "Présentation" %}</h2>
-          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.presentation }}</p>
-        </section>
-      {% endif %}
+  <div class="grid gap-8 sm:grid-cols-2">
+    {% if company.presentation %}
+      <section class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-noir/10">
+        <h2 class="mb-4 text-2xl font-bold leading-tight">{% trans "Présentation" %}</h2>
+        <p class="whitespace-pre-line leading-relaxed text-noir/80">{{ company.presentation }}</p>
+      </section>
+    {% endif %}
 
-      {% if company.mission %}
-        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
-          <h2 class="mb-3 text-2xl font-semibold">{% trans "Mission" %}</h2>
-          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.mission }}</p>
-        </section>
-      {% endif %}
+    {% if company.mission %}
+      <section class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-noir/10">
+        <h2 class="mb-4 text-2xl font-bold leading-tight">{% trans "Mission" %}</h2>
+        <p class="whitespace-pre-line leading-relaxed text-noir/80">{{ company.mission }}</p>
+      </section>
+    {% endif %}
 
-      {% if company.vision %}
-        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
-          <h2 class="mb-3 text-2xl font-semibold">{% trans "Vision" %}</h2>
-          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.vision }}</p>
-        </section>
-      {% endif %}
+    {% if company.vision %}
+      <section class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-noir/10">
+        <h2 class="mb-4 text-2xl font-bold leading-tight">{% trans "Vision" %}</h2>
+        <p class="whitespace-pre-line leading-relaxed text-noir/80">{{ company.vision }}</p>
+      </section>
+    {% endif %}
 
-      {% if company.location or company.phone_list or company.whatsapp or company.email %}
-        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
-          <h2 class="mb-3 text-2xl font-semibold">{% trans "Contact" %}</h2>
-          <div class="space-y-2 text-neutral-700">
-            {% if company.location %}
-              <p>{% trans "Localisation" %} : {{ company.location }}</p>
-            {% endif %}
-            {% for phone in company.phone_list %}
-              <p>{{ phone }}</p>
-            {% endfor %}
-            {% if company.whatsapp %}
-              <p>WhatsApp : {{ company.whatsapp }}</p>
-            {% endif %}
-            {% if company.email %}
-              <p>{{ company.email }}</p>
-            {% endif %}
-          </div>
-        </section>
-      {% endif %}
-    </div>
-  {% else %}
-    {% include "components/empty_state.html" %}
-  {% endif %}
+    {% if company.location or company.phone_list or company.whatsapp or company.email %}
+      <section class="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-noir/10">
+        <h2 class="mb-4 text-2xl font-bold leading-tight">{% trans "Contact" %}</h2>
+        <div class="space-y-3 text-noir/80">
+          {% if company.location %}
+            <p class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>{{ company.location }}</span>
+            </p>
+          {% endif %}
+          {% for phone in company.phone_list %}
+            <p class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              <span>{{ phone }}</span>
+            </p>
+          {% endfor %}
+          {% if company.whatsapp %}
+            <p class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              <span>WhatsApp : {{ company.whatsapp }}</span>
+            </p>
+          {% endif %}
+          {% if company.email %}
+            <p class="flex items-start gap-3">
+              <svg class="mt-0.5 h-5 w-5 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="M22 4L12 13 2 4" />
+              </svg>
+              <span>{{ company.email }}</span>
+            </p>
+          {% endif %}
+        </div>
+      </section>
+    {% endif %}
+  </div>
 {% endblock %}

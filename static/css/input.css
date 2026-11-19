@@ -1,3 +1,150 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @config "../../tailwind.config.js";
 @import "tailwindcss";
+
+/* ==========================================================================
+   GLOBALE
+   ========================================================================== */
+
+/* Scroll fluide */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Padding de base pour header, footer, main */
+/* Ajouté via wrapper dans base.html */
+
+/* ==========================================================================
+   TYPOGRAPHIE CENTRALE
+   ========================================================================== */
+
+/* Titres : hauteur de ligne plus rassurante */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.15;
+}
+
+/* Corps de texte : hauteur de ligne readable */
+p {
+  line-height: 1.6;
+}
+
+/* Lien : base visuelle commune */
+a {
+  @apply transition-colors duration-200;
+}
+
+/* ==========================================================================
+   FOCUS ACCESSIBLE
+   ========================================================================== */
+
+/* Indicateur de focus pour la navigation clavier */
+*:focus-visible {
+  outline: 2px solid #15A34A;
+  outline-offset: 2px;
+}
+
+/* Supprimer le focus visible sur les éléments interactifs au clic pur */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==========================================================================
+   SYNTHAXE DE BASE
+   ========================================================================== */
+
+/* Corps de page */
+body {
+  @apply bg-blanc text-noir;
+}
+
+/* Titres unifiés */
+h1,
+.h1 {
+  @apply text-4xl font-bold leading-tight sm:text-5xl;
+}
+
+h2,
+.h2 {
+  @apply text-3xl font-bold leading-tight sm:text-3xl;
+}
+
+h3,
+.h3 {
+  @apply text-2xl font-bold leading-tight;
+}
+
+h4,
+.h4 {
+  @apply text-xl font-bold leading-tight;
+}
+
+p {
+  @apply text-base leading-relaxed;
+}
+
+p,
+.p {
+  @apply text-base leading-relaxed text-noir;
+}
+
+/* Texte secondaire */
+.text-secondary {
+  @apply text-noir/70 text-sm leading-relaxed;
+}
+
+/* Liens */
+a {
+  @apply text-noir;
+}
+
+a:hover {
+  @apply text-vert;
+}
+
+/* ==========================================================================
+   COMPOSANTS RÉUTILISABLES
+   ========================================================================== */
+
+/* Bouton principal */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-vert px-7 py-3.5 text-sm font-semibold text-noir transition hover:opacity-90 active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-blanc px-7 py-3.5 text-sm font-semibold text-noir border border-noir/20 transition hover:bg-noir hover:text-blanc hover:border-noir active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
+}
+
+/* Bouton textuel */
+.btn-text {
+  @apply inline-flex items-center justify-center gap-2 text-sm font-semibold text-vert underline-offset-2 transition hover:underline;
+}
+
+/* Bouton d'icône */
+.btn-icon {
+  @apply flex h-11 w-11 items-center justify-center rounded-full text-noir transition hover:bg-noir/10 active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
+}
+
+/* Cartes */
+.card {
+  @apply overflow-hidden rounded-2xl bg-white;
+}
+
+.card img {
+  @apply h-full w-full object-cover;
+}
+
+.card-title {
+  @apply text-lg font-bold leading-tight text-noir;
+}
+
+.card-description {
+  @apply mt-3 text-sm leading-relaxed text-noir/80;
+}
+
