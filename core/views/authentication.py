@@ -1,7 +1,13 @@
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 
-from ..forms.content import INPUT_CLASSES
+
+# Champ à label flottant : le placeholder invisible est requis par les variantes
+# `peer-[:not(:placeholder-shown)]` du template.
+LOGIN_INPUT_CLASSES = (
+    "peer h-14 w-full rounded-lg border border-noir/20 bg-blanc px-4 pt-6 pb-2 "
+    "text-base text-noir transition focus:border-2 focus:border-vert focus:outline-none"
+)
 
 
 class LoginView(DjangoLoginView):
@@ -12,8 +18,20 @@ class LoginView(DjangoLoginView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        for field in form.fields.values():
-            field.widget.attrs.setdefault("class", INPUT_CLASSES)
+        for name, field in form.fields.items():
+            field.widget.attrs["class"] = LOGIN_INPUT_CLASSES
+            fields = {
+                "username": {
+                    "placeholder": " ",
+                    "autocomplete": "username",
+                    "autocapitalize": "none",
+                },
+                "password": {
+                    "placeholder": " ",
+                    "autocomplete": "current-password",
+                },
+            }
+            field.widget.attrs.update(fields.get(name, {}))
         return form
 
 

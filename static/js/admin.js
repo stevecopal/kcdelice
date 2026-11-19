@@ -91,6 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (button) {
         button.disabled = true;
         button.setAttribute("aria-disabled", "true");
+
+        // État de chargement : spinner visible, libellé masqué
+        const spinner = button.querySelector("[data-submit-spinner]");
+        const label = button.querySelector("[data-submit-label]");
+        if (spinner) spinner.classList.remove("hidden");
+        if (label) label.classList.add("hidden");
       }
     });
   });

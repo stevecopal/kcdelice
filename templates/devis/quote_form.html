@@ -1,58 +1,279 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n static l10n %}
 
-{% block title %}{% trans "Nouveau devis" %}{% endblock %}
+{% block title %}{% if quote %}{% trans "Modifier le devis" %}{% else %}{% trans "Nouveau devis" %}{% endif %}{% endblock %}
 
 {% block content %}
-  <div class="mx-auto max-w-xl">
-    <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "Nouveau devis" %}</h1>
+  <nav class="mb-4 text-sm text-noir/60" aria-label="{% trans 'Fil d’ariane' %}">
+    <a href="{% url 'quote_list' %}" class="font-medium hover:text-vert">{% trans "Devis" %}</a>
+    <span aria-hidden="true"> / </span>
+    {% if quote %}{{ quote.reference }}{% else %}{% trans "Nouveau" %}{% endif %}
+  </nav>
 
-    <form method="post" class="space-y-5" novalidate>
-      {% csrf_token %}
-
-      {% if form.non_field_errors %}
-        <div class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
-
-      <div>
-        <label for="{{ form.title.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Titre" %} *</label>
-        {{ form.title }}
-        {% if form.title.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.title.errors|first }}</p>
-        {% endif %}
-      </div>
-
-      <fieldset class="space-y-4 rounded-2xl bg-neutral-100 p-4">
-        <legend class="px-2 text-sm font-medium text-neutral-600">{% trans "Client (facultatif)" %}</legend>
-        <div>
-          <label for="{{ form.client_name.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Nom" %}</label>
-          {{ form.client_name }}
-          {% if form.client_name.errors %}
-            <p class="mt-2 text-sm text-red-600">{{ form.client_name.errors|first }}</p>
-          {% endif %}
-        </div>
-        <div>
-          <label for="{{ form.client_phone.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Téléphone" %}</label>
-          {{ form.client_phone }}
-          {% if form.client_phone.errors %}
-            <p class="mt-2 text-sm text-red-600">{{ form.client_phone.errors|first }}</p>
-          {% endif %}
-        </div>
-        <div>
-          <label for="{{ form.client_email.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "E-mail" %}</label>
-          {{ form.client_email }}
-          {% if form.client_email.errors %}
-            <p class="mt-2 text-sm text-red-600">{{ form.client_email.errors|first }}</p>
-          {% endif %}
-        </div>
-      </fieldset>
-
-      <div class="flex gap-3">
-        <button type="submit" class="rounded-full bg-vert px-6 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Créer le devis" %}</button>
-        <a href="{% url 'quote_list' %}" class="rounded-full bg-neutral-100 px-6 py-3 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Annuler" %}</a>
-      </div>
-    </form>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold sm:text-3xl">
+      {% if quote %}{% trans "Modifier le devis" %}{% else %}{% trans "Nouveau devis" %}{% endif %}
+    </h1>
+    <p class="mt-2 text-noir/70">
+      {% trans "Les totaux sont recalculés côté serveur à l’enregistrement." %}
+    </p>
   </div>
+
+  <form method="post" class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]" data-quote-form data-single-submit novalidate>
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% if form.non_field_errors or formset.non_form_errors %}
+      <div class="lg:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="space-y-6">
+      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+        <div class="mb-5">
+          <h2 class="text-lg font-bold">{% trans "Client" %}</h2>
+          <p class="mt-1 text-sm text-noir/60">
+            {% trans "Le nom et le numéro sont obligatoires : ils permettront d’enregistrer ce client après la génération du devis." %}
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="{{ form.client_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Nom du client" %} <span class="text-vert">*</span>
+            </label>
+            {{ form.client_name }}
+            {% for error in form.client_name.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.client_phone.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Téléphone" %} <span class="text-vert">*</span>
+            </label>
+            {{ form.client_phone }}
+            {% for error in form.client_phone.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.client_email.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "E-mail" %} <span class="text-xs font-normal text-noir/50">({% trans "facultatif" %})</span>
+            </label>
+            {{ form.client_email }}
+            {% for error in form.client_email.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.client_address.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Adresse" %} <span class="text-xs font-normal text-noir/50">({% trans "facultatif" %})</span>
+            </label>
+            {{ form.client_address }}
+            {% for error in form.client_address.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+        <h2 class="mb-5 text-lg font-bold">{% trans "Événement" %}</h2>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="{{ form.title.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Objet du devis" %}
+            </label>
+            {{ form.title }}
+            {% for error in form.title.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.event_location.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Lieu de l’événement" %} <span class="text-vert">*</span>
+            </label>
+            {{ form.event_location }}
+            {% for error in form.event_location.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.event_date.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Date de l’événement" %}
+            </label>
+            {{ form.event_date }}
+            {% for error in form.event_date.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.valid_until.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+              {% trans "Devis valable jusqu’au" %}
+            </label>
+            {{ form.valid_until }}
+            {% for error in form.valid_until.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold">{% trans "Prestations" %}</h2>
+            <p class="mt-1 text-sm text-noir/60">{% trans "Désignations libres : location, décoration, traiteur, transport…" %}</p>
+          </div>
+          <button type="button" data-add-item class="btn-text">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" />
+            </svg>
+            {% trans "Ajouter une ligne" %}
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[36rem] text-left text-sm">
+            <thead class="border-b border-noir/10 text-xs font-semibold uppercase tracking-wide text-noir/60">
+              <tr>
+                <th class="pb-3 pr-3">{% trans "Désignation" %}</th>
+                <th class="w-24 pb-3 pr-3 text-right">{% trans "Quantité" %}</th>
+                <th class="w-32 pb-3 pr-3 text-right">{% trans "Prix unitaire" %}</th>
+                <th class="w-32 pb-3 text-right">{% trans "Total" %}</th>
+                <th class="w-10 pb-3"></th>
+              </tr>
+            </thead>
+            <tbody data-item-rows class="divide-y divide-noir/10">
+              {% for item_form in formset %}
+                <tr data-item-row class="align-top">
+                  <td class="py-3 pr-3">
+                    {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+                    {{ item_form.title }}
+                    {% for error in item_form.title.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+                  </td>
+                  <td class="py-3 pr-3">
+                    {{ item_form.quantity }}
+                    {% for error in item_form.quantity.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+                  </td>
+                  <td class="py-3 pr-3">
+                    {{ item_form.unit_price }}
+                    {% for error in item_form.unit_price.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+                  </td>
+                  <td class="py-3 text-right">
+                    <span data-line-total class="block py-3 font-semibold tabular-nums text-noir/80">0 FCFA</span>
+                  </td>
+                  <td class="py-3 text-right">
+                    <span class="hidden">{{ item_form.DELETE }}</span>
+                    <button type="button" data-remove-item
+                            class="btn-icon h-9 w-9 text-noir/50 hover:text-red-600"
+                            aria-label="{% trans 'Supprimer la ligne' %}">
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+        <h2 class="mb-5 text-lg font-bold">{% trans "Conditions" %}</h2>
+        <label for="{{ form.notes.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
+          {% trans "Conditions particulières" %}
+        </label>
+        {{ form.notes }}
+        {% for error in form.notes.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+      </section>
+    </div>
+
+    <aside class="space-y-5 lg:sticky lg:top-24 lg:self-start">
+      <section class="rounded-2xl bg-noir p-5 text-blanc sm:p-6">
+        <h2 class="text-lg font-bold">{% trans "Récapitulatif" %}</h2>
+
+        <dl class="mt-5 space-y-3 text-sm">
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-blanc/70">{% trans "Sous-total" %}</dt>
+            <dd class="font-medium tabular-nums" data-summary="subtotal">{{ form.instance.subtotal|unlocalize }} FCFA</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-blanc/70">{% trans "Réduction" %}</dt>
+            <dd class="font-medium tabular-nums" data-summary="discount">0 FCFA</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-blanc/70">{% trans "Transport" %}</dt>
+            <dd class="font-medium tabular-nums" data-summary="transport">0 FCFA</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-t border-blanc/20 pt-3">
+            <dt class="font-semibold">{% trans "Total" %}</dt>
+            <dd class="text-lg font-bold tabular-nums text-vert" data-summary="total">0 FCFA</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <dt class="text-blanc/70">{% trans "Acompte prévu" %}</dt>
+            <dd class="font-medium tabular-nums" data-summary="deposit">0 FCFA</dd>
+          </div>
+          <div class="flex items-center justify-between gap-3 border-t border-blanc/20 pt-3">
+            <dt class="font-semibold">{% trans "Reste à régler" %}</dt>
+            <dd class="font-semibold tabular-nums" data-summary="balance">0 FCFA</dd>
+          </div>
+        </dl>
+
+        <p class="mt-4 text-xs leading-relaxed text-blanc/50">
+          {% trans "L’acompte prévu n’est pas un paiement encaissé." %}
+        </p>
+      </section>
+
+      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+        <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-noir/60">{% trans "Montants" %}</h2>
+
+        <div class="space-y-4">
+          <div>
+            <label for="{{ form.discount.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Réduction (FCFA)" %}</label>
+            {{ form.discount }}
+            {% for error in form.discount.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.transport_cost.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Transport (FCFA)" %}</label>
+            {{ form.transport_cost }}
+            {% for error in form.transport_cost.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+          <div>
+            <label for="{{ form.deposit_amount.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Acompte prévu (FCFA)" %}</label>
+            {{ form.deposit_amount }}
+            {% for error in form.deposit_amount.errors %}<p class="mt-1.5 text-sm font-medium text-red-600">{{ error }}</p>{% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <div class="flex flex-col gap-3">
+        <button type="submit" class="btn-primary w-full">
+          {% if quote %}{% trans "Enregistrer les modifications" %}{% else %}{% trans "Créer le devis" %}{% endif %}
+        </button>
+        <a href="{% if quote %}{% url 'quote_detail' quote.pk %}{% else %}{% url 'quote_list' %}{% endif %}" class="btn-secondary w-full">
+          {% trans "Annuler" %}
+        </a>
+      </div>
+    </aside>
+
+    <template data-item-template>
+      <tr data-item-row class="align-top">
+        <td class="py-3 pr-3">
+          {{ formset.empty_form.title }}
+        </td>
+        <td class="py-3 pr-3">
+          {{ formset.empty_form.quantity }}
+        </td>
+        <td class="py-3 pr-3">
+          {{ formset.empty_form.unit_price }}
+        </td>
+        <td class="py-3 text-right">
+          <span data-line-total class="block py-3 font-semibold tabular-nums text-noir/80">0 FCFA</span>
+        </td>
+        <td class="py-3 text-right">
+          <span class="hidden">{{ formset.empty_form.DELETE }}</span>
+          <button type="button" data-remove-item
+                  class="btn-icon h-9 w-9 text-noir/50 hover:text-red-600"
+                  aria-label="{% trans 'Supprimer la ligne' %}">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" />
+            </svg>
+          </button>
+        </td>
+      </tr>
+    </template>
+  </form>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/quote_form.js' %}" defer></script>
 {% endblock %}

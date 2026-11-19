@@ -5,28 +5,32 @@
 
 {% block content %}
   <section class="mb-12">
-    <h1 class="mb-4 text-4xl font-bold leading-tight sm:text-5xl">{% trans "Nos réalisations" %}</h1>
-    <p class="mb-10 max-w-2xl text-lg leading-relaxed text-noir/70">
+    <h1 class="mb-4 text-3xl font-bold leading-tight md:text-4xl">{% trans "Nos réalisations" %}</h1>
+    <p class="mb-8 max-w-2xl text-base leading-relaxed text-noir/70">
       {% trans "Des créations soignées pour des événements inoubliables : décoration, mise en scène et accueil d'exception." %}
     </p>
 
     {% if categories %}
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {# Galerie masonry : 2 colonnes mobile, 3 tablette, 4 desktop #}
+      <div class="columns-2 gap-3 md:columns-3 lg:columns-4">
         {% for category in categories %}
+          {% cycle 'h-48' 'h-72' 'h-60' 'h-80' 'h-52' 'h-64' as card_height silent %}
           <a href="{% url 'category_detail' category.pk %}"
-             class="group relative flex flex-col overflow-hidden rounded-3xl shadow-sm transition hover:shadow-md">
+             class="group relative mb-3 block break-inside-avoid overflow-hidden rounded-xl">
             {% if category.cover_image %}
               <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
-                   class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
+                   loading="lazy"
+                   class="{{ card_height }} w-full object-cover transition duration-300 group-hover:scale-[1.02]">
             {% else %}
-              <div class="flex h-56 w-full items-center justify-center rounded-3xl bg-noir/10">
-                <span class="text-lg font-medium text-noir/50">{% trans "Aucune image" %}</span>
+              <div class="{{ card_height }} flex w-full items-center justify-center bg-noir/10">
+                <span class="px-2 text-center text-sm font-medium text-noir/50">{% trans "Aucune image" %}</span>
               </div>
             {% endif %}
-            <div class="absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/20 to-transparent"></div>
-            <div class="absolute bottom-5 left-6 right-6">
-              <span class="text-lg font-semibold text-blanc">{{ category.name }}</span>
-            </div>
+            {# Dégradé de lisibilité, couleurs de la config #}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-transparent"></div>
+            <span class="absolute bottom-0 left-0 p-3 text-sm font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-base">
+              {{ category.name }}
+            </span>
           </a>
         {% endfor %}
       </div>

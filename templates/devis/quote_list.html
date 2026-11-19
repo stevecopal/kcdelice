@@ -4,42 +4,108 @@
 {% block title %}{% trans "Devis" %} — {% trans "Gestion" %}{% endblock %}
 
 {% block content %}
-  <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
-    <h1 class="text-3xl font-semibold sm:text-4xl">{% trans "Devis" %}</h1>
-    <a href="{% url 'quote_create' %}"
-       class="rounded-full bg-vert px-5 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Nouveau devis" %}</a>
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold sm:text-3xl">{% trans "Devis" %}</h1>
+      <p class="mt-2 text-noir/70">{% trans "Créez, suivez et partagez vos devis clients." %}</p>
+    </div>
+    <a href="{% url 'quote_create' %}" class="btn-primary">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" />
+      </svg>
+      {% trans "Nouveau devis" %}
+    </a>
   </div>
 
+  <form method="get" class="mb-6 flex flex-wrap items-end gap-3">
+    <div class="w-full sm:w-72">
+      <label for="quote-search" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Rechercher" %}</label>
+      <input id="quote-search" type="search" name="q" value="{{ q }}"
+             placeholder="{% trans 'Référence, client, lieu…' %}"
+             class="w-full rounded-xl border border-noir/20 bg-blanc px-4 py-3 text-noir placeholder:text-noir/50 focus:border-vert">
+    </div>
+    <div class="w-full sm:w-52">
+      <label for="quote-status" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Statut" %}</label>
+      <select id="quote-status" name="status"
+              class="w-full rounded-xl border border-noir/20 bg-blanc px-4 py-3 text-noir focus:border-vert">
+        <option value="">{% trans "Tous les statuts" %}</option>
+        {% for value, label in statuses %}
+          <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn-secondary">{% trans "Filtrer" %}</button>
+    {% if has_filters %}
+      <a href="{% url 'quote_list' %}" class="btn-text">{% trans "Réinitialiser" %}</a>
+    {% endif %}
+  </form>
+
   {% if quotes %}
-    <div class="overflow-hidden rounded-3xl bg-neutral-100">
-      <table class="w-full text-left text-sm">
-        <thead class="bg-neutral-200/70 text-neutral-600">
-          <tr>
-            <th class="px-4 py-3 font-medium">{% trans "Titre" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Client" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Total" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Modifié le" %}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for quote in quotes %}
-            <tr class="transition hover:bg-neutral-200/50">
-              <td class="px-4 py-3">
-                <a href="{% url 'quote_detail' quote.pk %}" class="font-medium text-noir transition hover:text-vert">{{ quote.title }}</a>
-              </td>
-              <td class="px-4 py-3 text-neutral-600">
-                {% if quote.client_name %}{{ quote.client_name }}{% else %}—{% endif %}
-              </td>
-              <td class="px-4 py-3 font-medium">{{ quote.total|unlocalize }} FCFA</td>
-              <td class="px-4 py-3 text-neutral-500">{{ quote.updated_at|date:"d/m/Y" }}</td>
+    <div class="overflow-hidden rounded-2xl border border-noir/10">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-noir/10 bg-noir/[0.03] text-xs font-semibold uppercase tracking-wide text-noir/60">
+            <tr>
+              <th class="px-5 py-3.5">{% trans "Référence" %}</th>
+              <th class="px-5 py-3.5">{% trans "Client" %}</th>
+              <th class="px-5 py-3.5">{% trans "Événement" %}</th>
+              <th class="px-5 py-3.5 text-right">{% trans "Total" %}</th>
+              <th class="px-5 py-3.5">{% trans "Statut" %}</th>
+              <th class="px-5 py-3.5 text-right">{% trans "Actions" %}</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-noir/10">
+            {% for quote in quotes %}
+              <tr class="transition hover:bg-noir/[0.03]">
+                <td class="px-5 py-4">
+                  <a href="{% url 'quote_detail' quote.pk %}" class="font-semibold text-noir hover:text-vert">{{ quote.reference }}</a>
+                  <p class="mt-0.5 text-xs text-noir/50">{{ quote.created_at|date:"d/m/Y" }}</p>
+                </td>
+                <td class="px-5 py-4">
+                  <p class="font-medium">{{ quote.client_name }}</p>
+                  <p class="mt-0.5 text-xs text-noir/60">{{ quote.client_phone }}</p>
+                </td>
+                <td class="px-5 py-4 text-noir/70">
+                  <p>{{ quote.event_location }}</p>
+                  {% if quote.event_date %}<p class="mt-0.5 text-xs text-noir/50">{{ quote.event_date|date:"d/m/Y" }}</p>{% endif %}
+                </td>
+                <td class="px-5 py-4 text-right font-semibold tabular-nums">{{ quote.total_amount|unlocalize }} FCFA</td>
+                <td class="px-5 py-4">
+                  {% if quote.status == "draft" %}
+                    <span class="inline-flex rounded-full bg-noir/10 px-3 py-1 text-xs font-semibold text-noir/70">{{ quote.get_status_display }}</span>
+                  {% elif quote.status == "sent" %}
+                    <span class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">{{ quote.get_status_display }}</span>
+                  {% elif quote.status == "accepted" or quote.status == "converted" %}
+                    <span class="inline-flex rounded-full bg-vert px-3 py-1 text-xs font-semibold text-blanc">{{ quote.get_status_display }}</span>
+                  {% else %}
+                    <span class="inline-flex rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">{{ quote.get_status_display }}</span>
+                  {% endif %}
+                </td>
+                <td class="px-5 py-4">
+                  <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                    <a href="{% url 'quote_detail' quote.pk %}" class="font-medium text-noir/70 hover:text-noir hover:underline">{% trans "Voir" %}</a>
+                    {% if quote.is_editable %}
+                      <a href="{% url 'quote_update' quote.pk %}" class="font-medium text-vert hover:underline">{% trans "Modifier" %}</a>
+                    {% endif %}
+                    <a href="{% url 'quote_pdf' quote.pk %}" class="font-medium text-noir/70 hover:text-noir hover:underline">PDF</a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
     {% include "components/pagination.html" %}
   {% else %}
-    {% trans "Aucun devis pour le moment." as empty_text %}
-    {% include "components/empty_state.html" with text=empty_text %}
+    {% if has_filters %}
+      {% trans "Aucun devis ne correspond à votre recherche." as empty_text %}
+      {% include "components/empty_state.html" with text=empty_text %}
+    {% else %}
+      <div class="rounded-2xl border border-dashed border-noir/20 bg-blanc px-6 py-14 text-center">
+        <p class="text-base text-noir/60">{% trans "Aucun devis pour le moment." %}</p>
+        <a href="{% url 'quote_create' %}" class="btn-primary mt-6 inline-flex">{% trans "Créer le premier devis" %}</a>
+      </div>
+    {% endif %}
   {% endif %}
 {% endblock %}

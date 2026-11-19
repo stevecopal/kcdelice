@@ -6,28 +6,28 @@ from .models import Quote, QuoteItem
 class QuoteItemInline(admin.TabularInline):
     model = QuoteItem
     extra = 1
-    fields = ("label", "quantity", "unit_price")
-    readonly_fields = ()
+    fields = ("title", "quantity", "unit_price", "total_price")
+    readonly_fields = ("total_price",)
 
 
 @admin.register(Quote)
 class QuoteAdmin(admin.ModelAdmin):
-    list_display = ("title", "client_name", "total_display", "updated_at")
-    search_fields = ("title", "client_name", "client_email")
-    list_select_related = ()
+    list_display = (
+        "reference",
+        "client_name",
+        "client_phone",
+        "status",
+        "total_amount",
+        "created_at",
+    )
+    list_filter = ("status",)
+    search_fields = ("reference", "client_name", "client_phone", "event_location")
+    readonly_fields = ("reference", "subtotal", "total_amount", "created_at", "updated_at")
     inlines = (QuoteItemInline,)
-    readonly_fields = ("created_at", "updated_at")
-
-    @admin.display(description="Total")
-    def total_display(self, obj) -> str:
-        return f"{obj.total} FCFA"
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("items")
 
 
 @admin.register(QuoteItem)
 class QuoteItemAdmin(admin.ModelAdmin):
-    list_display = ("label", "quote", "quantity", "unit_price")
-    search_fields = ("label", "quote__title")
+    list_display = ("title", "quote", "quantity", "unit_price", "total_price")
+    search_fields = ("title", "quote__reference", "quote__client_name")
     list_select_related = ("quote",)

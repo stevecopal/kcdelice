@@ -13,15 +13,19 @@
   <h1 class="mb-8 text-4xl font-bold leading-tight sm:text-5xl">{{ category.name }}</h1>
 
   {% if achievements %}
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-6">
       {% for achievement in achievements %}
         {% if achievement.images.all %}
           <button type="button" data-gallery-id="{{ achievement.id }}"
-                  class="group relative flex flex-col overflow-hidden rounded-3xl text-left shadow-sm transition hover:shadow-md">
+                  class="group relative flex flex-col overflow-hidden rounded-2xl text-left shadow-sm transition hover:shadow-md">
             <img src="{{ achievement.images.all.0.image.url }}" alt="{{ achievement.title }}"
-                 class="h-56 w-full object-cover transition duration-500 group-hover:scale-105">
-            <div class="absolute inset-0 bg-gradient-to-t from-noir/90 to-transparent"></div>
-            <span class="absolute bottom-5 left-6 right-6 text-lg font-semibold text-blanc">{{ achievement.title }}</span>
+                 loading="lazy"
+                 class="h-56 w-full object-cover transition duration-300 group-hover:scale-[1.02]">
+            {# Dégradé de lisibilité, couleurs de la config #}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/30 to-transparent"></div>
+            <span class="absolute bottom-0 left-0 p-4 text-5xl font-extrabold leading-tight text-blanc drop-shadow-md sm:text-4xl">
+              {{ achievement.title }}
+            </span>
           </button>
         {% else %}
           <div class="relative flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm">

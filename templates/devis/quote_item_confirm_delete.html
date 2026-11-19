@@ -4,15 +4,15 @@
 {% block title %}{% trans "Supprimer la ligne" %}{% endblock %}
 
 {% block content %}
-  <div class="mx-auto max-w-lg rounded-3xl bg-neutral-100 p-8">
-    <h1 class="text-2xl font-semibold">{% trans "Supprimer la ligne" %}</h1>
-    <p class="mt-4 text-neutral-700">
-      {% blocktrans with label=object.label %}Voulez-vous vraiment supprimer la ligne « {{ label }} » ?{% endblocktrans %}
+  <div class="mx-auto max-w-lg rounded-2xl border border-noir/10 p-8">
+    <h1 class="text-2xl font-bold">{% trans "Supprimer la ligne" %}</h1>
+    <p class="mt-4 text-noir/70">
+      {% blocktrans with title=object.title %}Voulez-vous vraiment supprimer la ligne « {{ title }} » ?{% endblocktrans %}
     </p>
-    <form method="post" class="mt-8 flex gap-3">
+    <form method="post" class="mt-8 flex flex-wrap gap-3">
       {% csrf_token %}
-      <button type="submit" class="rounded-full bg-red-600 px-6 py-3 text-sm font-medium text-white transition hover:opacity-85">{% trans "Supprimer" %}</button>
-      <a href="{% url 'quote_detail' object.quote_id %}" class="rounded-full bg-white px-6 py-3 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Annuler" %}</a>
+      <button type="submit" class="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">{% trans "Supprimer" %}</button>
+      <a href="{% url 'quote_detail' object.quote_id %}" class="btn-secondary">{% trans "Annuler" %}</a>
     </form>
   </div>
 {% endblock %}

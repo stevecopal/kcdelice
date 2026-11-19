@@ -1,11 +1,16 @@
-from .create import QuoteCreateView
-from .detail import QuoteDetailView, QuoteItemCreateView, QuoteItemDeleteView
+from .detail import QuoteDeleteView, QuoteDetailView, QuoteStatusUpdateView
+from .form import QuoteFormView
+from .items import QuoteItemCreateView, QuoteItemDeleteView
 from .list import QuoteListView
+from .pdf import QuotePDFView
 
 __all__ = [
-    "QuoteCreateView",
+    "QuoteDeleteView",
     "QuoteDetailView",
+    "QuoteFormView",
     "QuoteItemCreateView",
     "QuoteItemDeleteView",
     "QuoteListView",
+    "QuotePDFView",
+    "QuoteStatusUpdateView",
 ]

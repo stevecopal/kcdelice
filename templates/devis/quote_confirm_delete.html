@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Supprimer le devis" %}{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-lg rounded-2xl border border-noir/10 p-8">
+    <h1 class="text-2xl font-bold">{% trans "Supprimer le devis" %}</h1>
+    <p class="mt-4 text-noir/70">
+      {% blocktrans with reference=quote.reference client=quote.client_name %}Voulez-vous vraiment supprimer le devis {{ reference }} de {{ client }} ? Cette action est définitive.{% endblocktrans %}
+    </p>
+    <form method="post" class="mt-8 flex flex-wrap gap-3">
+      {% csrf_token %}
+      <button type="submit" class="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+        {% trans "Supprimer" %}
+      </button>
+      <a href="{% url 'quote_detail' quote.pk %}" class="btn-secondary">{% trans "Annuler" %}</a>
+    </form>
+  </div>
+{% endblock %}

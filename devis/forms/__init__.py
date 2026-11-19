@@ -1,3 +1,3 @@
-from .quote import QuoteForm, QuoteItemForm
+from .quote import QuoteForm, QuoteItemForm, QuoteItemFormSet, posted_totals
 
-__all__ = ["QuoteForm", "QuoteItemForm"]
+__all__ = ["QuoteForm", "QuoteItemForm", "QuoteItemFormSet", "posted_totals"]

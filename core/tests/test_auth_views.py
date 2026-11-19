@@ -28,7 +28,10 @@ def test_dashboard_requires_login(client):
 def test_login_page_renders(client):
     response = client.get("/connexion/")
     assert response.status_code == 200
-    assert "Se connecter" in response.content.decode()
+    body = response.content.decode()
+    assert "Bienvenue !" in body
+    assert "Continuer" in body
+    assert "Retour au site" in body
 
 
 @pytest.mark.django_db

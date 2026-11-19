@@ -1,69 +1,160 @@
 {% extends "admin/base.html" %}
 {% load i18n l10n %}
 
-{% block title %}{{ quote.title }} — {% trans "Devis" %}{% endblock %}
+{% block title %}{{ quote.reference }} — {% trans "Devis" %}{% endblock %}
 
 {% block content %}
-  <nav class="mb-6 text-sm text-neutral-500">
-    <a href="{% url 'quote_list' %}" class="transition hover:text-vert">{% trans "Devis" %}</a>
-    <span class="mx-2">/</span>
-    <span>{{ quote.title }}</span>
+  <nav class="mb-6 text-sm text-noir/60" aria-label="{% trans 'Fil d’ariane' %}">
+    <a href="{% url 'quote_list' %}" class="font-medium hover:text-vert">{% trans "Devis" %}</a>
+    <span aria-hidden="true"> / </span>
+    <span>{{ quote.reference }}</span>
   </nav>
 
-  <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+  <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-semibold sm:text-4xl">{{ quote.title }}</h1>
-      {% if quote.has_client %}
-        <p class="mt-3 text-sm text-neutral-600">
-          {% if quote.client_name %}{{ quote.client_name }}{% endif %}
-          {% if quote.client_phone %} · {{ quote.client_phone }}{% endif %}
-          {% if quote.client_email %} · {{ quote.client_email }}{% endif %}
-        </p>
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl font-bold sm:text-3xl">{{ quote.reference }}</h1>
+        {% if quote.status == "draft" %}
+          <span class="rounded-full bg-noir/10 px-3 py-1 text-xs font-semibold text-noir/70">{{ quote.get_status_display }}</span>
+        {% elif quote.status == "sent" %}
+          <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">{{ quote.get_status_display }}</span>
+        {% elif quote.status == "accepted" or quote.status == "converted" %}
+          <span class="rounded-full bg-vert px-3 py-1 text-xs font-semibold text-blanc">{{ quote.get_status_display }}</span>
+        {% else %}
+          <span class="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">{{ quote.get_status_display }}</span>
+        {% endif %}
+      </div>
+      <p class="mt-2 text-noir/70">
+        {% if quote.title %}{{ quote.title }} · {% endif %}
+        {% trans "créé le" %} {{ quote.created_at|date:"d/m/Y" }}
+        {% if quote.valid_until %} · {% trans "valable jusqu’au" %} {{ quote.valid_until|date:"d/m/Y" }}{% endif %}
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <a href="{% url 'quote_pdf' quote.pk %}" class="btn-secondary">{% trans "Télécharger le PDF" %}</a>
+      {% if quote.is_editable %}
+        <a href="{% url 'quote_update' quote.pk %}" class="btn-primary">{% trans "Modifier" %}</a>
       {% endif %}
     </div>
-    <a href="{% url 'quote_item_add' quote.pk %}"
-       class="rounded-full bg-vert px-5 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Ajouter une ligne" %}</a>
   </div>
 
-  {% if items %}
-    <div class="overflow-hidden rounded-3xl bg-neutral-100">
-      <table class="w-full text-left text-sm">
-        <thead class="bg-neutral-200/70 text-neutral-600">
-          <tr>
-            <th class="px-4 py-3 font-medium">{% trans "Désignation" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Quantité" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Prix unitaire" %}</th>
-            <th class="px-4 py-3 font-medium">{% trans "Total" %}</th>
-            <th class="px-4 py-3"><span class="sr-only">{% trans "Actions" %}</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in items %}
-            <tr class="transition hover:bg-neutral-200/50">
-              <td class="px-4 py-3 font-medium">{{ item.obj.label }}</td>
-              <td class="px-4 py-3 text-neutral-600">{{ item.obj.quantity|unlocalize }}</td>
-              <td class="px-4 py-3 text-neutral-600">{{ item.obj.unit_price|unlocalize }} FCFA</td>
-              <td class="px-4 py-3 font-medium">{{ item.total|unlocalize }} FCFA</td>
-              <td class="px-4 py-3 text-right">
-                <form method="post" action="{% url 'quote_item_delete' item.obj.pk %}" class="inline">
-                  {% csrf_token %}
-                  <button type="submit" class="text-sm font-medium text-red-600 transition hover:text-red-500">{% trans "Supprimer" %}</button>
-                </form>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot class="bg-neutral-200/70">
-          <tr>
-            <td colspan="3" class="px-4 py-3 text-right font-medium text-neutral-600">{% trans "Total" %}</td>
-            <td class="px-4 py-3 text-lg font-semibold text-vert">{{ total|unlocalize }} FCFA</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
+  <div class="grid gap-6 lg:grid-cols-3">
+    <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <h2 class="text-sm font-bold uppercase tracking-wide text-noir/60">{% trans "Client" %}</h2>
+      <p class="mt-3 text-lg font-semibold">{{ quote.client_name }}</p>
+      <p class="mt-1 text-sm text-noir/70">{{ quote.client_phone }}</p>
+      {% if quote.client_email %}<p class="mt-1 text-sm text-noir/70">{{ quote.client_email }}</p>{% endif %}
+      {% if quote.client_address %}<p class="mt-1 text-sm text-noir/70">{{ quote.client_address }}</p>{% endif %}
+    </section>
+
+    <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <h2 class="text-sm font-bold uppercase tracking-wide text-noir/60">{% trans "Événement" %}</h2>
+      <p class="mt-3 font-semibold">{{ quote.event_location }}</p>
+      {% if quote.event_date %}
+        <p class="mt-1 text-sm text-noir/70">{{ quote.event_date|date:"d/m/Y" }}</p>
+      {% else %}
+        <p class="mt-1 text-sm text-noir/50">{% trans "Date non précisée" %}</p>
+      {% endif %}
+    </section>
+
+    <section class="rounded-2xl bg-noir p-5 text-blanc sm:p-6">
+      <h2 class="text-sm font-bold uppercase tracking-wide text-blanc/60">{% trans "Montants" %}</h2>
+      <dl class="mt-3 space-y-2 text-sm">
+        <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Sous-total" %}</dt><dd class="tabular-nums">{{ quote.subtotal|unlocalize }} FCFA</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Réduction" %}</dt><dd class="tabular-nums">− {{ quote.discount|unlocalize }} FCFA</dd></div>
+        <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Transport" %}</dt><dd class="tabular-nums">+ {{ quote.transport_cost|unlocalize }} FCFA</dd></div>
+        <div class="flex justify-between gap-3 border-t border-blanc/20 pt-2">
+          <dt class="font-semibold">{% trans "Total" %}</dt>
+          <dd class="text-lg font-bold tabular-nums text-vert">{{ quote.total_amount|unlocalize }} FCFA</dd>
+        </div>
+        <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Acompte prévu" %}</dt><dd class="tabular-nums">{{ quote.deposit_amount|unlocalize }} FCFA</dd></div>
+        <div class="flex justify-between gap-3 border-t border-blanc/20 pt-2">
+          <dt class="font-semibold">{% trans "Reste à régler" %}</dt>
+          <dd class="font-semibold tabular-nums">{{ balance|unlocalize }} FCFA</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+
+  <section class="mt-6 overflow-hidden rounded-2xl border border-noir/10">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-noir/10 bg-noir/[0.03] px-5 py-4">
+      <h2 class="font-semibold">{% trans "Prestations" %}</h2>
+      {% if quote.is_editable %}
+        <a href="{% url 'quote_item_add' quote.pk %}" class="btn-text">{% trans "Ajouter une ligne" %}</a>
+      {% endif %}
     </div>
-  {% else %}
-    {% trans "Aucune ligne pour le moment." as empty_text %}
-    {% include "components/empty_state.html" with text=empty_text %}
+
+    {% if items %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-noir/10 text-xs font-semibold uppercase tracking-wide text-noir/60">
+            <tr>
+              <th class="px-5 py-3">{% trans "Désignation" %}</th>
+              <th class="px-5 py-3 text-right">{% trans "Quantité" %}</th>
+              <th class="px-5 py-3 text-right">{% trans "Prix unitaire" %}</th>
+              <th class="px-5 py-3 text-right">{% trans "Total" %}</th>
+              {% if quote.is_editable %}<th class="px-5 py-3"></th>{% endif %}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-noir/10">
+            {% for item in items %}
+              <tr>
+                <td class="px-5 py-4 font-medium">{{ item.obj.title }}</td>
+                <td class="px-5 py-4 text-right tabular-nums text-noir/70">{{ item.obj.quantity|unlocalize }}</td>
+                <td class="px-5 py-4 text-right tabular-nums text-noir/70">{{ item.obj.unit_price|unlocalize }} FCFA</td>
+                <td class="px-5 py-4 text-right font-semibold tabular-nums">{{ item.total|unlocalize }} FCFA</td>
+                {% if quote.is_editable %}
+                  <td class="px-5 py-4 text-right">
+                    <a href="{% url 'quote_item_delete' item.obj.pk %}" class="text-sm font-medium text-noir/60 hover:text-red-600">{% trans "Supprimer" %}</a>
+                  </td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="px-5 py-10 text-center text-sm text-noir/60">
+        {% trans "Aucune ligne pour le moment." %}
+        {% if quote.is_editable %}
+          <a href="{% url 'quote_item_add' quote.pk %}" class="ml-1 font-medium text-vert hover:underline">{% trans "Ajouter la première ligne" %}</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  {% if quote.notes %}
+    <section class="mt-6 rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <h2 class="text-sm font-bold uppercase tracking-wide text-noir/60">{% trans "Conditions particulières" %}</h2>
+      <p class="mt-3 whitespace-pre-line text-sm text-noir/80">{{ quote.notes }}</p>
+    </section>
   {% endif %}
+
+  <section class="mt-6 flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-noir/10 p-5 sm:p-6">
+    <div>
+      <h2 class="font-semibold">{% trans "Statut du devis" %}</h2>
+      <p class="mt-1 text-sm text-noir/60">
+        {% if next_statuses %}
+          {% trans "Faites avancer le devis une fois l’étape en cours terminée." %}
+        {% else %}
+          {% trans "Ce devis est finalisé, aucun changement de statut n’est possible." %}
+        {% endif %}
+      </p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      {% for next in next_statuses %}
+        <form method="post" action="{% url 'quote_status' quote.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="status" value="{{ next.value }}">
+          <button type="submit" class="{% if next.value == 'accepted' or next.value == 'converted' %}btn-primary{% elif next.value == 'refused' %}btn-secondary text-red-600{% else %}btn-secondary{% endif %}">
+            {{ next.label }}
+          </button>
+        </form>
+      {% endfor %}
+      {% if quote.is_editable %}
+        <a href="{% url 'quote_delete' quote.pk %}" class="btn-text text-red-600">{% trans "Supprimer le brouillon" %}</a>
+      {% endif %}
+    </div>
+  </section>
 {% endblock %}

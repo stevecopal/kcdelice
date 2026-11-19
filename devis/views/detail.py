@@ -1,16 +1,18 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import CreateView, DeleteView, DetailView
+from django.views import View
+from django.views.generic import DeleteView, DetailView
 
-from ..forms import QuoteItemForm
-from ..models import Quote, QuoteItem
-from ..services.calculations import line_total
+from ..models import Quote
+from ..services.calculations import line_total, quote_balance
+from ..services.status import allowed_statuses, change_status
 
 
 class QuoteDetailView(LoginRequiredMixin, DetailView):
-    """Détail d'un devis : lignes, total, ajout de ligne."""
+    """Détail d'un devis : client, événement, lignes, montants et actions."""
 
     model = Quote
     template_name = "devis/quote_detail.html"
@@ -21,48 +23,53 @@ class QuoteDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        items = list(self.object.items.all())
         context["items"] = [
-            {"obj": item, "total": line_total(item)} for item in items
+            {"obj": item, "total": line_total(item)} for item in self.object.items.all()
         ]
-        context["total"] = self.object.total
+        context["balance"] = quote_balance(self.object)
+        context["next_statuses"] = [
+            {"value": value, "label": Quote.Status(value).label}
+            for value in allowed_statuses(self.object)
+        ]
         return context
 
 
-class QuoteItemCreateView(LoginRequiredMixin, CreateView):
-    """Ajout d'une ligne à un devis."""
+class QuoteStatusUpdateView(LoginRequiredMixin, View):
+    """Change le statut d'un devis selon les transitions autorisées."""
 
-    model = QuoteItem
-    form_class = QuoteItemForm
-    template_name = "devis/quote_item_form.html"
+    def post(self, request, pk):
+        quote = get_object_or_404(Quote, pk=pk)
+        new_status = request.POST.get("status", "")
+        try:
+            change_status(quote, new_status)
+        except ValidationError as error:
+            messages.error(request, error.messages[0])
+        else:
+            messages.success(
+                request,
+                f"Le devis est maintenant « {quote.get_status_display()} ».",
+            )
+        return redirect("quote_detail", pk=quote.pk)
+
+
+class QuoteDeleteView(LoginRequiredMixin, DeleteView):
+    """Supprime un devis, uniquement s'il est encore au brouillon."""
+
+    model = Quote
+    template_name = "devis/quote_confirm_delete.html"
+    context_object_name = "quote"
 
     def dispatch(self, request, *args, **kwargs):
-        self.quote = get_object_or_404(Quote, pk=kwargs["pk"])
+        self.object = self.get_object()
+        if not self.object.is_editable:
+            messages.error(request, "Seul un brouillon peut être supprimé.")
+            return redirect("quote_detail", pk=self.object.pk)
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        form.instance.quote = self.quote
-        messages.success(self.request, "Ligne ajoutée au devis.")
-        return super().form_valid(form)
-
     def get_success_url(self):
-        return reverse("quote_detail", kwargs={"pk": self.quote.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["quote"] = self.quote
-        return context
-
-
-class QuoteItemDeleteView(LoginRequiredMixin, DeleteView):
-    """Suppression d'une ligne de devis."""
-
-    model = QuoteItem
-    template_name = "devis/quote_item_confirm_delete.html"
-
-    def get_success_url(self):
-        return reverse("quote_detail", kwargs={"pk": self.object.quote_id})
+        return reverse("quote_list")
 
     def form_valid(self, form):
-        messages.success(self.request, "Ligne supprimée.")
+        reference = self.object.reference
+        messages.success(self.request, f"Devis {reference} supprimé.")
         return super().form_valid(form)
