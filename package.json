@@ -1,0 +1,15 @@
+{
+  "name": "kcdelice-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chaîne de build Tailwind CSS du projet KCDélices.",
+  "scripts": {
+    "dev": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
+    "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify",
+    "run:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.5",
+    "tailwindcss": "4.3.5"
+  }
+}

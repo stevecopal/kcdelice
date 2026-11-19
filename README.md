@@ -11,6 +11,7 @@ Application web Django de l'entreprise événementielle : site public dynamique,
 | Tailwind CSS | 4.3.5 (`@tailwindcss/cli`) | Styles |
 | Pillow | 13.0.0 | Traitement des images |
 | psycopg | 3.3.9 (`[binary]`) | Pilote PostgreSQL |
+| python-decouple | 3.8 | Lecture des variables d'environnement |
 | SQLite | 3.50.4 (module `sqlite3` de Python) | Base de développement |
 | WeasyPrint | 70.0 | Génération PDF |
 | Gunicorn | 27.0.1 | Serveur WSGI de production |

@@ -1,0 +1,38 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Environnements virtuels
+.venv/
+
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Base de données de développement
+db.sqlite3
+db.sqlite3-journal
+
+# Fichiers média et statiques collectés
+media/
+staticfiles/
+
+# Tests et couverture
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Frontend
+node_modules/
+npm-debug.log*
+static/css/output.css.map
+
+# Logs et fichiers système
+*.log
+.DS_Store
