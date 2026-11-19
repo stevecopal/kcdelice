@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Nouveau devis" %}{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-xl">
+    <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "Nouveau devis" %}</h1>
+
+    <form method="post" class="space-y-5" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div>
+        <label for="{{ form.title.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Titre" %} *</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ form.title.errors|first }}</p>
+        {% endif %}
+      </div>
+
+      <fieldset class="space-y-4 rounded-2xl bg-neutral-100 p-4">
+        <legend class="px-2 text-sm font-medium text-neutral-600">{% trans "Client (facultatif)" %}</legend>
+        <div>
+          <label for="{{ form.client_name.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Nom" %}</label>
+          {{ form.client_name }}
+          {% if form.client_name.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.client_name.errors|first }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label for="{{ form.client_phone.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Téléphone" %}</label>
+          {{ form.client_phone }}
+          {% if form.client_phone.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.client_phone.errors|first }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label for="{{ form.client_email.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "E-mail" %}</label>
+          {{ form.client_email }}
+          {% if form.client_email.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.client_email.errors|first }}</p>
+          {% endif %}
+        </div>
+      </fieldset>
+
+      <div class="flex gap-3">
+        <button type="submit" class="rounded-full bg-vert px-6 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Créer le devis" %}</button>
+        <a href="{% url 'quote_list' %}" class="rounded-full bg-neutral-100 px-6 py-3 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Annuler" %}</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

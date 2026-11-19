@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Erreur serveur" %}{% endblock %}
+
+{% block content %}
+  <div class="flex flex-col items-center justify-center py-24 text-center">
+    <p class="text-6xl font-bold text-vert">500</p>
+    <h1 class="mt-4 text-3xl font-semibold">{% trans "Erreur serveur" %}</h1>
+    <p class="mt-3 max-w-md text-neutral-600">{% trans "Une erreur inattendue est survenue. Veuillez réessayer plus tard." %}</p>
+    <a href="{% url 'home' %}" class="mt-8 rounded-full bg-vert px-6 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Retour à l'accueil" %}</a>
+  </div>
+{% endblock %}

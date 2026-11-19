@@ -1,0 +1,4 @@
+{% load i18n %}
+<div class="rounded-3xl bg-neutral-100 px-6 py-14 text-center text-neutral-500">
+  <p>{% if text %}{{ text }}{% else %}{% trans "Aucun contenu pour le moment." %}{% endif %}</p>
+</div>

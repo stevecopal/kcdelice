@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Ajouter une ligne" %}{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-xl">
+    <nav class="mb-6 text-sm text-neutral-500">
+      <a href="{% url 'quote_list' %}" class="transition hover:text-vert">{% trans "Devis" %}</a>
+      <span class="mx-2">/</span>
+      <a href="{% url 'quote_detail' quote.pk %}" class="transition hover:text-vert">{{ quote.title }}</a>
+    </nav>
+
+    <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "Ajouter une ligne" %}</h1>
+
+    <form method="post" class="space-y-5" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div>
+        <label for="{{ form.label.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Désignation" %} *</label>
+        {{ form.label }}
+        {% if form.label.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ form.label.errors|first }}</p>
+        {% endif %}
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="{{ form.quantity.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Quantité" %} *</label>
+          {{ form.quantity }}
+          {% if form.quantity.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.quantity.errors|first }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <label for="{{ form.unit_price.id_for_label }}" class="mb-2 block text-sm font-medium text-neutral-700">{% trans "Prix unitaire" %} *</label>
+          {{ form.unit_price }}
+          {% if form.unit_price.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.unit_price.errors|first }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="submit" class="rounded-full bg-vert px-6 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Ajouter" %}</button>
+        <a href="{% url 'quote_detail' quote.pk %}" class="rounded-full bg-neutral-100 px-6 py-3 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Annuler" %}</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

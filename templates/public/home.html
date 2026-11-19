@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Réalisations" %} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "Nos réalisations" %}</h1>
+
+  {% if categories %}
+    <div class="grid grid-cols-1 gap-[5px] sm:grid-cols-2 lg:grid-cols-3">
+      {% for category in categories %}
+        <a href="{% url 'category_detail' category.pk %}"
+           class="group relative block overflow-hidden rounded-3xl {% if forloop.counter0|divisibleby:2 %}aspect-[4/5]{% else %}aspect-[16/10] lg:mt-8{% endif %}">
+          {% if category.cover_image %}
+            <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
+                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+          {% else %}
+            <div class="flex h-full w-full items-center justify-center bg-neutral-200 text-neutral-500">{% trans "Aucune image" %}</div>
+          {% endif %}
+          <div class="absolute inset-0 bg-gradient-to-t from-noir/85 via-noir/20 to-transparent"></div>
+          <span class="absolute bottom-4 left-4 right-4 text-lg font-medium text-white">{{ category.name }}</span>
+        </a>
+      {% endfor %}
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    {% include "components/empty_state.html" %}
+  {% endif %}
+{% endblock %}

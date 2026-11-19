@@ -1,0 +1,12 @@
+{% load i18n %}
+{% if is_paginated %}
+  <nav class="mt-10 flex items-center justify-center gap-3" aria-label="{% trans "Pagination" %}">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Précédent" %}</a>
+    {% endif %}
+    <span class="text-sm text-neutral-600">{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} sur {{ total }}{% endblocktrans %}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-noir transition hover:bg-neutral-200">{% trans "Suivant" %}</a>
+    {% endif %}
+  </nav>
+{% endif %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Devis" %} — {% trans "Gestion" %}{% endblock %}
+
+{% block content %}
+  <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-3xl font-semibold sm:text-4xl">{% trans "Devis" %}</h1>
+    <a href="{% url 'quote_create' %}"
+       class="rounded-full bg-vert px-5 py-3 text-sm font-medium text-noir transition hover:opacity-85">{% trans "Nouveau devis" %}</a>
+  </div>
+
+  {% if quotes %}
+    <div class="overflow-hidden rounded-3xl bg-neutral-100">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-neutral-200/70 text-neutral-600">
+          <tr>
+            <th class="px-4 py-3 font-medium">{% trans "Titre" %}</th>
+            <th class="px-4 py-3 font-medium">{% trans "Client" %}</th>
+            <th class="px-4 py-3 font-medium">{% trans "Total" %}</th>
+            <th class="px-4 py-3 font-medium">{% trans "Modifié le" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for quote in quotes %}
+            <tr class="transition hover:bg-neutral-200/50">
+              <td class="px-4 py-3">
+                <a href="{% url 'quote_detail' quote.pk %}" class="font-medium text-noir transition hover:text-vert">{{ quote.title }}</a>
+              </td>
+              <td class="px-4 py-3 text-neutral-600">
+                {% if quote.client_name %}{{ quote.client_name }}{% else %}—{% endif %}
+              </td>
+              <td class="px-4 py-3 font-medium">{{ quote.total }} FCFA</td>
+              <td class="px-4 py-3 text-neutral-500">{{ quote.updated_at|date:"d/m/Y" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "components/pagination.html" %}
+  {% else %}
+    {% trans "Aucun devis pour le moment." as empty_text %}
+    {% include "components/empty_state.html" with text=empty_text %}
+  {% endif %}
+{% endblock %}

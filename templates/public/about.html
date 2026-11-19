@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "À propos" %} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-8 text-3xl font-semibold sm:text-4xl">{% trans "À propos" %}</h1>
+
+  {% if company %}
+    <div class="grid gap-[5px]">
+      {% if company.presentation %}
+        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
+          <h2 class="mb-3 text-2xl font-semibold">{% trans "Présentation" %}</h2>
+          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.presentation }}</p>
+        </section>
+      {% endif %}
+
+      {% if company.mission %}
+        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
+          <h2 class="mb-3 text-2xl font-semibold">{% trans "Mission" %}</h2>
+          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.mission }}</p>
+        </section>
+      {% endif %}
+
+      {% if company.vision %}
+        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
+          <h2 class="mb-3 text-2xl font-semibold">{% trans "Vision" %}</h2>
+          <p class="whitespace-pre-line leading-relaxed text-neutral-700">{{ company.vision }}</p>
+        </section>
+      {% endif %}
+
+      {% if company.location or company.phone_list or company.whatsapp or company.email %}
+        <section class="rounded-3xl bg-neutral-100 p-6 sm:p-8">
+          <h2 class="mb-3 text-2xl font-semibold">{% trans "Contact" %}</h2>
+          <div class="space-y-2 text-neutral-700">
+            {% if company.location %}
+              <p>{% trans "Localisation" %} : {{ company.location }}</p>
+            {% endif %}
+            {% for phone in company.phone_list %}
+              <p>{{ phone }}</p>
+            {% endfor %}
+            {% if company.whatsapp %}
+              <p>WhatsApp : {{ company.whatsapp }}</p>
+            {% endif %}
+            {% if company.email %}
+              <p>{{ company.email }}</p>
+            {% endif %}
+          </div>
+        </section>
+      {% endif %}
+    </div>
+  {% else %}
+    {% include "components/empty_state.html" %}
+  {% endif %}
+{% endblock %}

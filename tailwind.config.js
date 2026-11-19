@@ -13,7 +13,7 @@ module.exports = {
         vert: "#15A34A",
       },
       fontFamily: {
-        display: ['"Suez One"', "ui-serif", "Georgia", "serif"],
+        display: ['"Inter"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
     },
   },
