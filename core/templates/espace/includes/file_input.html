@@ -1,0 +1,10 @@
+{% load i18n %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+{% if widget.is_initial %}
+  <label for="{{ widget.checkbox_id }}" class="mt-2 flex cursor-pointer items-center gap-2 text-sm text-noir/60">
+    <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"
+           class="h-4 w-4 rounded border-noir/30 accent-vert"
+           {% if widget.attrs.disabled %}disabled{% endif %}>
+    {% trans "Supprimer l’image actuelle" %}
+  </label>
+{% endif %}

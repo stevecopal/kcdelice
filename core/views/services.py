@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
@@ -35,6 +35,12 @@ class ServiceListView(StaffRequiredMixin, ListView):
         if self.search_query:
             queryset = queryset.filter(title__icontains=self.search_query)
         return queryset
+
+    def render_to_response(self, context, **response_kwargs):
+        """Filtres AJAX : ne renvoyer que le bloc de résultats."""
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return render(self.request, "espace/services/_results.html", context)
+        return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

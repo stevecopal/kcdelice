@@ -1,4 +1,5 @@
 from .achievement import Achievement
+from .analytics import PageView
 from .company import Company
 from .event import EventCategory
 from .media import AchievementImage
@@ -10,6 +11,7 @@ __all__ = [
     "AchievementImage",
     "Company",
     "EventCategory",
+    "PageView",
     "Service",
     "User",
 ]

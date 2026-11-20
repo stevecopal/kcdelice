@@ -132,6 +132,60 @@ a:hover {
   @apply flex h-11 w-11 items-center justify-center rounded-full text-noir transition hover:bg-noir/10 active:opacity-85 disabled:opacity-40 disabled:pointer-events-none;
 }
 
+/* Galerie de réalisation : carte marquée pour suppression */
+.gallery-item-removed {
+  opacity: 0.55;
+}
+
+.gallery-item-removed [data-gallery-preview] {
+  filter: grayscale(1);
+}
+
+/* Notifications (toasts) */
+.toast {
+  animation: toast-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast-out {
+  animation: toast-out 0.2s ease-in forwards;
+}
+
+.toast-progress {
+  transform-origin: left center;
+  animation: toast-progress 6s linear forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(12px, 0, 0) scale(0.98);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
 /* Cartes */
 .card {
   @apply overflow-hidden rounded-2xl bg-white;

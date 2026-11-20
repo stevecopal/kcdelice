@@ -1,43 +1,138 @@
 {% extends "espace/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Paramètres" %}{% endblock %}
 
 {% block content %}
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold sm:text-3xl">{% trans "Paramètres" %}</h2>
-    <p class="mt-2 text-noir/70">{% trans "Gérez votre compte administrateur." %}</p>
+  {% trans "Aucun e-mail" as no_email %}
+  <div class="mb-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-vert">{% trans "Compte" %}</p>
+    <h1 class="mt-1 text-2xl font-bold sm:text-3xl">{% trans "Paramètres" %}</h1>
+    <p class="mt-2 text-sm text-noir/60">{% trans "Votre identité d’administrateur et la sécurité de votre accès." %}</p>
   </div>
 
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-    <div class="rounded-2xl border border-noir/10 bg-blanc p-6">
-      <h3 class="text-lg font-bold">{% trans "Compte" %}</h3>
-      <dl class="mt-4 space-y-3 text-sm">
-        <div>
-          <dt class="text-noir/60">{% trans "Nom d’utilisateur" %}</dt>
-          <dd class="mt-0.5 font-medium">{{ request.user.username }}</dd>
+  <div class="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+    <aside class="space-y-4">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-5 sm:p-6">
+        <div class="flex items-center gap-3">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-noir text-lg font-bold text-blanc"
+                aria-hidden="true">{{ request.user.username|slice:":1"|upper }}</span>
+          <div class="min-w-0">
+            <p class="truncate font-semibold">{{ request.user.username }}</p>
+            <p class="truncate text-sm text-noir/60">{{ request.user.email|default:no_email }}</p>
+          </div>
         </div>
-        <div>
-          <dt class="text-noir/60">{% trans "E-mail" %}</dt>
-          <dd class="mt-0.5 font-medium">{{ request.user.email|default:"—" }}</dd>
-        </div>
-        <div>
-          <dt class="text-noir/60">{% trans "Dernière connexion" %}</dt>
-          <dd class="mt-0.5 font-medium">{{ request.user.last_login|date:"d/m/Y H:i"|default:"—" }}</dd>
-        </div>
-      </dl>
-    </div>
 
-    <div class="rounded-2xl border border-noir/10 bg-blanc p-6 lg:col-span-2">
-      <h3 class="text-lg font-bold">{% trans "Changer le mot de passe" %}</h3>
-      <form method="post" class="mt-5" data-single-submit>
+        <dl class="mt-5 space-y-3 border-t border-noir/10 pt-5 text-sm">
+          <div class="flex items-start justify-between gap-3">
+            <dt class="text-noir/60">{% trans "Rôle" %}</dt>
+            <dd class="text-right font-medium">{% if request.user.is_superuser %}{% trans "Administrateur principal" %}{% else %}{% trans "Administrateur" %}{% endif %}</dd>
+          </div>
+          <div class="flex items-start justify-between gap-3">
+            <dt class="text-noir/60">{% trans "Dernière connexion" %}</dt>
+            <dd class="text-right font-medium">{{ request.user.last_login|date:"d/m/Y H:i"|default:"—" }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="rounded-2xl bg-noir p-5 text-blanc sm:p-6">
+        <h2 class="text-sm font-bold uppercase tracking-wide text-blanc/60">{% trans "Bon réflexe" %}</h2>
+        <p class="mt-2 text-sm leading-relaxed text-blanc/80">
+          {% trans "Choisissez un mot de passe long et unique, que vous n’utilisez nulle part ailleurs." %}
+        </p>
+      </section>
+    </aside>
+
+    <section class="rounded-2xl border border-noir/10 bg-blanc p-5 sm:p-6">
+      <div class="flex items-start gap-3">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-vert/10 text-vert" aria-hidden="true">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </span>
+        <div>
+          <h2 class="text-lg font-bold">{% trans "Mot de passe" %}</h2>
+          <p class="mt-0.5 text-sm text-noir/60">{% trans "Modifiez-le régulièrement pour garder la main sur votre espace." %}</p>
+        </div>
+      </div>
+
+      <form method="post" class="mt-6 max-w-lg" data-single-submit data-password-form
+            data-username="{{ request.user.username }}" data-email="{{ request.user.email }}">
         {% csrf_token %}
         {% include "espace/includes/form_errors.html" %}
-        {% include "espace/includes/field.html" with field=form.old_password %}
-        {% include "espace/includes/field.html" with field=form.new_password1 %}
-        {% include "espace/includes/field.html" with field=form.new_password2 %}
-        <button type="submit" class="btn-primary mt-2">{% trans "Mettre à jour le mot de passe" %}</button>
+
+        {% for field in form %}
+          <div class="mb-5">
+            <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">{{ field.label }}</label>
+            <div class="relative">
+              {{ field }}
+              <button type="button" data-password-toggle
+                      class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-noir/40 transition hover:text-noir"
+                      aria-label="{% trans 'Afficher le mot de passe' %}" aria-pressed="false">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            {% if field.errors %}
+              <div class="mt-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div class="rounded-xl border border-noir/10 bg-noir/[0.02] p-4">
+          <div class="flex items-center justify-between gap-3">
+            <p class="text-sm font-semibold" id="password-strength-label">{% trans "Robustesse du mot de passe" %}</p>
+            <span class="text-xs font-semibold text-noir/50" data-password-strength-text>—</span>
+          </div>
+          <div class="mt-2 flex gap-1.5" role="presentation" data-password-strength-bar>
+            <span class="h-1.5 flex-1 rounded-full bg-noir/10"></span>
+            <span class="h-1.5 flex-1 rounded-full bg-noir/10"></span>
+            <span class="h-1.5 flex-1 rounded-full bg-noir/10"></span>
+            <span class="h-1.5 flex-1 rounded-full bg-noir/10"></span>
+          </div>
+
+          <ul class="mt-4 space-y-1.5 text-sm text-noir/60" data-password-rules>
+            <li data-rule="length" class="flex items-center gap-2">
+              <span class="flex h-4 w-4 items-center justify-center rounded-full border border-noir/20" aria-hidden="true"></span>
+              {% trans "Au moins 8 caractères" %}
+            </li>
+            <li data-rule="variety" class="flex items-center gap-2">
+              <span class="flex h-4 w-4 items-center justify-center rounded-full border border-noir/20" aria-hidden="true"></span>
+              {% trans "Lettres et chiffres, ou un signe de ponctuation" %}
+            </li>
+            <li data-rule="not-numeric" class="flex items-center gap-2">
+              <span class="flex h-4 w-4 items-center justify-center rounded-full border border-noir/20" aria-hidden="true"></span>
+              {% trans "Pas uniquement des chiffres" %}
+            </li>
+            <li data-rule="personal" class="flex items-center gap-2">
+              <span class="flex h-4 w-4 items-center justify-center rounded-full border border-noir/20" aria-hidden="true"></span>
+              {% trans "Différent de votre nom d’utilisateur et de votre e-mail" %}
+            </li>
+          </ul>
+
+          <p class="mt-4 hidden items-center gap-2 text-sm font-medium text-vert" data-password-match>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+            {% trans "Les deux mots de passe correspondent." %}
+          </p>
+          <p class="mt-4 hidden items-center gap-2 text-sm font-medium text-red-600" data-password-mismatch>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" />
+            </svg>
+            {% trans "Les deux mots de passe sont différents." %}
+          </p>
+        </div>
+
+        <button type="submit" class="btn-primary mt-6">{% trans "Mettre à jour le mot de passe" %}</button>
       </form>
-    </div>
+    </section>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/password.js' %}" defer></script>
 {% endblock %}

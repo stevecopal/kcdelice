@@ -1,7 +1,7 @@
 from django import forms
 
 from ..models import Company
-from .content import FILE_CLASSES, INPUT_CLASSES
+from .content import FILE_CLASSES, INPUT_CLASSES, ImageFileInput
 
 
 class CompanyForm(forms.ModelForm):
@@ -48,7 +48,7 @@ class CompanyForm(forms.ModelForm):
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": INPUT_CLASSES}),
-            "logo": forms.ClearableFileInput(
+            "logo": ImageFileInput(
                 attrs={"class": FILE_CLASSES, "accept": "image/*", "data-preview": "company-logo"}
             ),
             "presentation": forms.Textarea(

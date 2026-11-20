@@ -17,7 +17,7 @@
     </a>
   </div>
 
-  <form method="get" class="mb-6 flex flex-wrap gap-3">
+  <form method="get" class="mb-6 flex flex-wrap items-end gap-3" data-ajax-filter>
     <input type="search" name="q" value="{{ q }}" placeholder="{% trans 'Rechercher un service…' %}"
            class="w-full max-w-xs rounded-xl border border-noir/20 bg-blanc px-4 py-3 text-noir placeholder:text-noir/50 focus:border-vert sm:w-72">
     <button type="submit" class="btn-secondary">{% trans "Rechercher" %}</button>
@@ -26,74 +26,7 @@
     {% endif %}
   </form>
 
-  {% if services %}
-    <div class="overflow-hidden rounded-2xl border border-noir/10">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-          <thead class="border-b border-noir/10 bg-noir/[0.03] text-xs font-semibold uppercase tracking-wide text-noir/60">
-            <tr>
-              <th class="px-5 py-3.5">{% trans "Service" %}</th>
-              <th class="px-5 py-3.5">{% trans "Statut" %}</th>
-              <th class="px-5 py-3.5 text-right">{% trans "Actions" %}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-noir/10">
-            {% for service in services %}
-              <tr class="transition hover:bg-noir/[0.03]">
-                <td class="px-5 py-4">
-                  <div class="flex items-center gap-3">
-                    {% if service.cover_image %}
-                      <img src="{{ service.cover_image.url }}" alt="" class="h-11 w-16 shrink-0 rounded-lg object-cover">
-                    {% else %}
-                      <span class="flex h-11 w-16 shrink-0 items-center justify-center rounded-lg bg-noir/5 text-noir/40" aria-hidden="true">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                        </svg>
-                      </span>
-                    {% endif %}
-                    <div>
-                      <p class="font-medium">{{ service.title }}</p>
-                      {% if service.description %}
-                        <p class="mt-0.5 max-w-md truncate text-xs text-noir/60">{{ service.description }}</p>
-                      {% endif %}
-                    </div>
-                  </div>
-                </td>
-                <td class="px-5 py-4">
-                  {% if service.is_active %}
-                    <span class="rounded-full bg-vert px-3 py-1 text-xs font-semibold text-blanc">{% trans "Active" %}</span>
-                  {% else %}
-                    <span class="rounded-full border border-noir/20 px-3 py-1 text-xs font-semibold text-noir/60">{% trans "Inactive" %}</span>
-                  {% endif %}
-                </td>
-                <td class="px-5 py-4">
-                  <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-                    <a href="{% url 'service_update' service.pk %}" class="font-medium text-vert hover:underline">{% trans "Modifier" %}</a>
-                    <form method="post" action="{% url 'service_toggle' service.pk %}">
-                      {% csrf_token %}
-                      <button type="submit" class="font-medium text-noir/70 hover:text-noir hover:underline">
-                        {% if service.is_active %}{% trans "Désactiver" %}{% else %}{% trans "Activer" %}{% endif %}
-                      </button>
-                    </form>
-                    <a href="{% url 'service_delete' service.pk %}" class="font-medium text-noir/70 hover:text-noir hover:underline">{% trans "Supprimer" %}</a>
-                  </div>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    {% include "components/pagination.html" %}
-  {% else %}
-    {% if q %}
-      {% trans "Aucun service ne correspond à votre recherche." as empty_text %}
-      {% include "components/empty_state.html" with text=empty_text %}
-    {% else %}
-      <div class="rounded-2xl border border-dashed border-noir/20 bg-blanc px-6 py-14 text-center">
-        <p class="text-base text-noir/60">{% trans "Aucun service pour le moment." %}</p>
-        <a href="{% url 'service_create' %}" class="btn-primary mt-6 inline-flex">{% trans "Créer le premier" %}</a>
-      </div>
-    {% endif %}
-  {% endif %}
+  <div data-filter-results aria-live="polite">
+    {% include "espace/services/_results.html" %}
+  </div>
 {% endblock %}

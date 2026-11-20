@@ -1,0 +1,71 @@
+{% load i18n %}
+{% if achievements %}
+  <div class="overflow-hidden rounded-2xl border border-noir/10 bg-blanc">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-noir/10 bg-noir/[0.03] text-xs font-semibold uppercase tracking-wide text-noir/60">
+          <tr>
+            <th class="px-5 py-3.5">{% trans "Réalisation" %}</th>
+            <th class="px-5 py-3.5">{% trans "Catégorie" %}</th>
+            <th class="px-5 py-3.5">{% trans "Statut" %}</th>
+            <th class="px-5 py-3.5 text-right">{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-noir/10">
+          {% for achievement in achievements %}
+            <tr class="transition hover:bg-noir/[0.03]">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  {% with image=achievement.images.all.0 %}
+                    {% if image %}
+                      <img src="{{ image.image.url }}" alt="" class="h-11 w-16 shrink-0 rounded-lg object-cover">
+                    {% else %}
+                      <span class="flex h-11 w-16 shrink-0 items-center justify-center rounded-lg bg-noir/5 text-noir/40" aria-hidden="true">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" />
+                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                      </span>
+                    {% endif %}
+                  {% endwith %}
+                  <span class="font-medium">{{ achievement.title }}</span>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-noir/70">{{ achievement.category.name }}</td>
+              <td class="px-5 py-4">
+                {% if achievement.is_active %}
+                  <span class="rounded-full bg-vert px-3 py-1 text-xs font-semibold text-blanc">{% trans "Active" %}</span>
+                {% else %}
+                  <span class="rounded-full border border-noir/20 px-3 py-1 text-xs font-semibold text-noir/60">{% trans "Inactive" %}</span>
+                {% endif %}
+              </td>
+              <td class="px-5 py-4">
+                <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                  <a href="{% url 'achievement_update' achievement.pk %}" class="font-medium text-vert hover:underline">{% trans "Modifier" %}</a>
+                  <form method="post" action="{% url 'achievement_toggle' achievement.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="font-medium text-noir/70 hover:text-noir hover:underline">
+                      {% if achievement.is_active %}{% trans "Désactiver" %}{% else %}{% trans "Activer" %}{% endif %}
+                    </button>
+                  </form>
+                  <a href="{% url 'achievement_delete' achievement.pk %}" class="font-medium text-noir/70 hover:text-noir hover:underline">{% trans "Supprimer" %}</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% include "components/pagination.html" %}
+{% else %}
+  {% if q or selected_category %}
+    {% trans "Aucune réalisation ne correspond à vos critères." as empty_text %}
+    {% include "components/empty_state.html" with text=empty_text %}
+  {% else %}
+    <div class="rounded-2xl border border-dashed border-noir/20 bg-blanc px-6 py-14 text-center">
+      <p class="text-base text-noir/60">{% trans "Aucune réalisation pour le moment." %}</p>
+      <a href="{% url 'achievement_create' %}" class="btn-primary mt-6 inline-flex">{% trans "Publier la première" %}</a>
+    </div>
+  {% endif %}
+{% endif %}

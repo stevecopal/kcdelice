@@ -285,3 +285,16 @@ def test_quote_pdf_download(auth_client, quote):
     assert response.status_code == 200
     assert response["Content-Type"] == "application/pdf"
     assert response.content.startswith(b"%PDF")
+
+
+@pytest.mark.django_db
+def test_quote_list_filters_are_ajax_ready(auth_client, quote):
+    """Une requête de filtre AJAX ne renvoie que le bloc de résultats."""
+    full = auth_client.get("/devis/")
+    assert "<html" in full.content.decode()
+
+    partial = auth_client.get("/devis/", HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+    assert partial.status_code == 200
+    body = partial.content.decode()
+    assert "<html" not in body
+    assert quote.reference in body

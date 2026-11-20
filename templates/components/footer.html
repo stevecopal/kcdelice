@@ -3,38 +3,57 @@
 <!-- =========================================================================
      FOOTER
      ========================================================================= -->
-<footer class=" bg-noir">
-  <div class="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-3 sm:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1.2fr]">
+<footer class="overflow-hidden bg-noir/1 text-noir">
 
-    <!-- Colonne 1 : Entreprise -->
-    <div>
-      <a href="{% url 'home' %}" class="flex items-center gap-3">
-        {% if company and company.logo %}
-          <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-10 w-10 rounded-full object-cover ring-1 ring-blanc/20">
-        {% else %}
-          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
-        {% endif %}
-        <span class="text-lg font-bold leading-tight text-blanc">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+  {# ═══════════ NOM DE L'ENTREPRISE EN 3D (compact, centré) ═══════════ #}
+  <div class="mx-auto w-full max-w-7xl px-4 py-2 text-center sm:px-6 sm:py-6">
+    <a href="{% url 'home' %}"
+       data-fit-text
+       aria-label="{% if company %}{{ company.name }}{% else %}{% trans 'KCDélices' %}{% endif %}"
+       class="relative inline-block select-none font-extrabold uppercase leading-none tracking-tight"
+       style="font-size: 40px;">
+
+      {# Couches d'extrusion (effet 3D), décalées en em donc proportionnelles à la taille #}
+      <span aria-hidden="true" class="absolute left-0 top-0 translate-x-[0.05em] translate-y-[0.05em] whitespace-nowrap text-noir">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+      <span aria-hidden="true" class="absolute left-0 top-0 translate-x-[0.035em] translate-y-[0.035em] whitespace-nowrap text-noir/80">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+      <span aria-hidden="true" class="absolute left-0 top-0 translate-x-[0.02em] translate-y-[0.02em] whitespace-nowrap text-noir/60">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+
+      {# Face avant #}
+      <span data-fit-text-inner class="relative inline-block whitespace-nowrap text-vert">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+    </a>
+    <div class="mx-auto flex w-full max-w-7xl items-center justify-center px-6 py-3">
+      <a href="https://copal-satcheme.cohub.site" target="_blank" rel="noopener noreferrer"
+         class="group inline-flex items-center gap-2.5 pl-1.5 pr-4 text-sm font-medium text-noir/70 transition duration-300 hover:border-vert hover:bg-vert hover:text-blanc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vert focus-visible:ring-offset-2">
+        
+        <span>
+          {% trans "Développé par" %}
+          <strong class="font-extrabold text-vert transition duration-300 group-hover:text-blanc">mr copal</strong>
+        </span>
       </a>
-
-      <p class="mt-5 max-w-sm text-sm leading-relaxed text-blanc">
-        {% if company and company.presentation %}
-          {{ company.presentation|truncatechars:170 }}
-        {% else %}
-          {% trans "Édition d'événements et réalisations d'exception." %}
-        {% endif %}
-      </p>
-
-      <div class="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 text-xs text-blanc/50 sm:flex-row sm:text-sm">
-      <p class="text-blanc" >&copy; {% now "Y" %} {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}.</p>
-      <p class="text-blanc">
-        {% trans "Développé par" %}
-        <a class="font-semibold text-vert transition hover:text-blanc" href="https://copal-satcheme.cohub.site" target="_blank" rel="noopener noreferrer">mr copal</a>
-      </p>
-    </div>
-    </div>
-
-    
+  </div>
 
  
+
+  {# Taille fixe (max 40px), réduite seulement si le nom dépasse la largeur disponible #}
+  <script>
+    (function () {
+      var MAX = 40; // taille maximale en px, modifiable
+      function fit(box) {
+        var inner = box.querySelector('[data-fit-text-inner]');
+        if (!inner) return;
+        box.style.fontSize = MAX + 'px';
+        var available = box.parentElement.clientWidth - 32;
+        var textWidth = inner.getBoundingClientRect().width;
+        if (textWidth > available && textWidth > 0) {
+          box.style.fontSize = (MAX * available / textWidth) + 'px';
+        }
+      }
+      function fitAll() {
+        document.querySelectorAll('[data-fit-text]').forEach(fit);
+      }
+      fitAll();
+      window.addEventListener('resize', fitAll);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+    })();
+  </script>
 </footer>

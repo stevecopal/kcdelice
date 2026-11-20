@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -63,6 +63,12 @@ class AchievementListView(StaffRequiredMixin, ListView):
         if self.category_filter:
             queryset = queryset.filter(category_id=self.category_filter)
         return queryset
+
+    def render_to_response(self, context, **response_kwargs):
+        """Filtres AJAX : ne renvoyer que le bloc de résultats."""
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return render(self.request, "espace/achievements/_results.html", context)
+        return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

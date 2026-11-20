@@ -1,7 +1,11 @@
 {% extends "espace/base.html" %}
-{% load i18n l10n %}
+{% load i18n l10n static %}
 
 {% block title %}{{ quote.reference }} — {% trans "Devis" %}{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/pdf_preview.js' %}" defer></script>
+{% endblock %}
 
 {% block content %}
   <nav class="mb-6 text-sm text-noir/60" aria-label="{% trans 'Fil d’ariane' %}">
@@ -32,7 +36,14 @@
     </div>
 
     <div class="flex flex-wrap gap-3">
-      <a href="{% url 'quote_pdf' quote.pk %}" class="btn-secondary">{% trans "Télécharger le PDF" %}</a>
+      <button type="button" data-pdf-preview data-pdf-url="{% url 'quote_pdf' quote.pk %}"
+              data-pdf-name="Devis-{{ quote.reference }}.pdf" class="btn-primary">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />
+        </svg>
+        {% trans "Prévisualiser le PDF" %}
+      </button>
+      <a href="{% url 'quote_pdf' quote.pk %}" download class="btn-secondary">{% trans "Télécharger" %}</a>
       {% if quote.is_editable %}
         <a href="{% url 'quote_update' quote.pk %}" class="btn-primary">{% trans "Modifier" %}</a>
       {% endif %}
@@ -64,12 +75,12 @@
         <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Sous-total" %}</dt><dd class="tabular-nums">{{ quote.subtotal|unlocalize }} FCFA</dd></div>
         <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Réduction" %}</dt><dd class="tabular-nums">− {{ quote.discount|unlocalize }} FCFA</dd></div>
         <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Transport" %}</dt><dd class="tabular-nums">+ {{ quote.transport_cost|unlocalize }} FCFA</dd></div>
-        <div class="flex justify-between gap-3 border-t border-blanc/20 pt-2">
+        <div class="flex justify-between gap-3  pt-2">
           <dt class="font-semibold">{% trans "Total" %}</dt>
           <dd class="text-lg font-bold tabular-nums text-vert">{{ quote.total_amount|unlocalize }} FCFA</dd>
         </div>
         <div class="flex justify-between gap-3"><dt class="text-blanc/70">{% trans "Acompte prévu" %}</dt><dd class="tabular-nums">{{ quote.deposit_amount|unlocalize }} FCFA</dd></div>
-        <div class="flex justify-between gap-3 border-t border-blanc/20 pt-2">
+        <div class="flex justify-between gap-3  pt-2">
           <dt class="font-semibold">{% trans "Reste à régler" %}</dt>
           <dd class="font-semibold tabular-nums">{{ balance|unlocalize }} FCFA</dd>
         </div>
@@ -157,4 +168,31 @@
       {% endif %}
     </div>
   </section>
+
+  <div id="pdf-preview" data-pdf-modal class="fixed inset-0 z-[70] hidden bg-noir/70 p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="pdf-preview-title">
+    <div class="mx-auto flex h-full w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-blanc shadow-[0_24px_70px_-20px_rgba(11,13,15,0.6)]">
+      <header class="flex flex-wrap items-center justify-between gap-3 border-b border-noir/10 px-4 py-3 sm:px-5">
+        <div class="min-w-0">
+          <h2 id="pdf-preview-title" class="truncate font-semibold">{% trans "Aperçu du devis" %} {{ quote.reference }}</h2>
+          <p class="mt-0.5 text-xs text-noir/50">{% trans "Voici exactement la mise en page du fichier téléchargé." %}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="{% url 'quote_pdf' quote.pk %}" download data-pdf-download class="btn-secondary hidden sm:inline-flex">{% trans "Télécharger" %}</a>
+          <a href="{% url 'quote_pdf' quote.pk %}" target="_blank" rel="noopener" class="btn-text hidden sm:inline-flex">{% trans "Nouvel onglet" %}</a>
+          <button type="button" data-pdf-close
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-noir/60 transition hover:bg-noir/5 hover:text-noir"
+                  aria-label="{% trans 'Fermer l’aperçu' %}">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" /></svg>
+          </button>
+        </div>
+      </header>
+      <div class="relative flex-1 bg-noir/[0.04]">
+        <iframe data-pdf-frame title="{% trans 'Aperçu du PDF' %}" class="h-full w-full"></iframe>
+        <div data-pdf-loading class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-blanc/80 text-sm text-noir/60">
+          <span class="h-6 w-6 animate-spin rounded-full border-2 border-vert border-t-transparent" aria-hidden="true"></span>
+          {% trans "Génération de l’aperçu…" %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

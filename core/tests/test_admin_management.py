@@ -378,3 +378,30 @@ def test_clients_page_is_placeholder(staff_client):
     response = staff_client.get("/espace/clients/")
     assert response.status_code == 200
     assert "prochainement" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_achievement_and_service_lists_support_ajax_filters(staff_client):
+    category = EventCategory.objects.create(name="Galerie")
+    Achievement.objects.create(title="Réalisation AJAX", category=category)
+    Service.objects.create(title="Service AJAX")
+
+    for url, marker in (
+        ("/espace/realisations/", "Réalisation AJAX"),
+        ("/espace/services/", "Service AJAX"),
+    ):
+        response = staff_client.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        assert response.status_code == 200
+        body = response.content.decode()
+        assert "<html" not in body
+        assert marker in body
+
+
+@pytest.mark.django_db
+def test_settings_page_has_live_password_validation(staff_client):
+    response = staff_client.get("/espace/parametres/")
+    body = response.content.decode()
+    assert "data-password-form" in body
+    assert "data-password-strength-bar" in body
+    # Les consignes techniques de Django ne sont plus imprimées en bloc.
+    assert "trop ressembler à vos autres informations" not in body

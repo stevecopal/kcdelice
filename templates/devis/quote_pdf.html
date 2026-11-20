@@ -6,156 +6,192 @@
     <style>
       @page {
         size: A4;
-        margin: 18mm 16mm 20mm;
-        @bottom-center {
-          content: "Devis {{ quote.reference }} — page " counter(page) " / " counter(pages);
-          font-size: 8pt;
-          color: #7a7f85;
+        margin: 15mm 14mm 22mm;
+        @bottom-left {
+          content: "{{ company.name|default:'KCDélices' }}";
+          font-size: 9pt;
+          color: #6b7177;
+        }
+        @bottom-right {
+          content: "Page " counter(page) " / " counter(pages);
+          font-size: 9pt;
+          color: #6b7177;
         }
       }
+
       * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
       body {
-        margin: 0;
         font-family: "DejaVu Sans", "Helvetica", Arial, sans-serif;
-        font-size: 9.5pt;
-        color: #16181a;
-        line-height: 1.45;
+        font-size: 11pt;
+        line-height: 1.5;
+        color: #1b1e20;
+        background: #ffffff;
       }
-      h1, h2, h3, p, dl, dd { margin: 0; }
-      .header {
+      h1, h2, h3, p, dl, dt, dd { margin: 0; }
+      a { color: inherit; text-decoration: none; }
+
+      /* En-tête ------------------------------------------------------------ */
+      .topbar {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
-        gap: 16mm;
+        gap: 10mm;
         padding-bottom: 6mm;
-        border-bottom: 2pt solid #15A34A;
       }
-      .brand { display: flex; align-items: center; gap: 4mm; }
+      .brand { display: flex; align-items: center; gap: 5mm; flex: 1; }
       .logo {
-        width: 18mm;
-        height: 18mm;
-        object-fit: contain;
-        border-radius: 2mm;
+        width: 26mm;
+        height: 26mm;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 0.8pt solid #d9dcdf;
+        background: #ffffff;
       }
       .logo-fallback {
-        width: 18mm;
-        height: 18mm;
+        width: 26mm;
+        height: 26mm;
         border-radius: 50%;
-        background: #15A34A;
-        color: #ffffff;
+        background: #eceef0;
+        border: 0.8pt solid #d9dcdf;
+        color: #1b1e20;
         font-weight: bold;
-        font-size: 12pt;
+        font-size: 16pt;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      .brand-name { font-size: 14pt; font-weight: bold; }
-      .brand-info { font-size: 8.5pt; color: #4c5157; margin-top: 1mm; }
-      .doc-title { text-align: right; }
-      .doc-title h1 {
-        font-size: 22pt;
-        letter-spacing: 0.5pt;
-        text-transform: uppercase;
-        color: #15A34A;
-      }
-      .doc-title .reference { font-size: 11pt; font-weight: bold; margin-top: 1mm; }
-      .doc-title .dates { font-size: 8.5pt; color: #4c5157; margin-top: 1mm; }
+      .brand-name { font-size: 16pt; font-weight: bold; line-height: 1.2; }
+      .brand-meta { font-size: 10pt; color: #4b5157; margin-top: 1mm; }
 
-      .parties {
-        display: flex;
-        gap: 8mm;
-        margin-top: 7mm;
+      .doc-title { text-align: right; min-width: 52mm; }
+      .doc-title h1 {
+        font-size: 26pt;
+        line-height: 1;
+        letter-spacing: 1pt;
+        text-transform: uppercase;
+        color: #1b1e20;
       }
+      .doc-title .reference { margin-top: 3mm; font-size: 12pt; font-weight: bold; }
+      .doc-title .dates { margin-top: 1mm; font-size: 10pt; color: #4b5157; }
+
+      /* Objet du devis (une seule ligne) ------------------------------------ */
+      .subject {
+        margin-top: 8mm;
+        text-align: center;
+      }
+      .subject .label {
+        font-size: 9.5pt;
+        text-transform: uppercase;
+        letter-spacing: 1pt;
+        color: #6b7177;
+      }
+      .subject .text {
+        display: block;
+        margin-top: 1.5mm;
+        font-size: 14pt;
+        font-weight: bold;
+        text-decoration: underline;
+        text-underline-offset: 2mm;
+        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Parties ------------------------------------------------------------ */
+      .parties { display: flex; gap: 6mm; margin-top: 8mm; }
       .box {
         flex: 1;
-        border: 0.6pt solid #d7dbdf;
-        border-radius: 2.5mm;
-        padding: 4mm;
+        min-width: 0;
+        border: 0.8pt solid #d9dcdf;
+        border-radius: 3mm;
+        padding: 5mm;
+        background: #fafafa;
+        page-break-inside: avoid;
       }
       .box h2 {
-        font-size: 8pt;
+        font-size: 9.5pt;
         text-transform: uppercase;
-        letter-spacing: 0.7pt;
-        color: #7a7f85;
-        margin-bottom: 2mm;
+        letter-spacing: 0.8pt;
+        color: #6b7177;
+        margin-bottom: 2.5mm;
       }
-      .box .strong { font-weight: bold; font-size: 10.5pt; }
-      .muted { color: #4c5157; font-size: 8.8pt; }
+      .box .strong { font-weight: bold; font-size: 12.5pt; }
+      .muted { color: #4b5157; font-size: 10.5pt; margin-top: 1mm; }
 
+      /* Tableau des prestations -------------------------------------------- */
       table.items {
         width: 100%;
         border-collapse: collapse;
         margin-top: 8mm;
       }
-      table.items thead th {
-        background: #0B0D0F;
-        color: #ffffff;
-        font-size: 8pt;
+      table.items thead { display: table-header-group; }
+      table.items tr { page-break-inside: avoid; }
+      table.items th {
+        background: #eef0f1;
+        color: #1b1e20;
+        font-size: 9.5pt;
         text-transform: uppercase;
         letter-spacing: 0.6pt;
-        padding: 2.5mm 3mm;
+        padding: 3.2mm 3mm;
         text-align: left;
+        font-weight: bold;
       }
-      table.items thead th.right { text-align: right; }
-      table.items tbody td {
-        padding: 2.5mm 3mm;
-        border-bottom: 0.5pt solid #e4e7ea;
+      table.items th.right { text-align: right; }
+      table.items td {
+        padding: 3.2mm 3mm;
+        border-bottom: 0.6pt solid #e3e5e7;
         vertical-align: top;
+        font-size: 11pt;
       }
-      table.items tbody td.right { text-align: right; white-space: nowrap; }
-      table.items tbody tr:nth-child(even) td { background: #f7f8f9; }
+      table.items td.right { text-align: right; white-space: nowrap; }
+      table.items td.num { color: #6b7177; width: 9mm; }
+      table.items tbody tr:nth-child(even) td { background: #f7f8f8; }
 
-      .totals {
-        margin-top: 6mm;
-        margin-left: auto;
-        width: 78mm;
+      /* Totaux -------------------------------------------------------------- */
+      .bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 8mm;
+        margin-top: 7mm;
+        page-break-inside: avoid;
       }
+      .terms { flex: 1; font-size: 10.5pt; color: #4b5157; }
+      .terms h2 {
+        font-size: 9.5pt;
+        text-transform: uppercase;
+        letter-spacing: 0.8pt;
+        color: #6b7177;
+        margin-bottom: 2mm;
+      }
+      .terms p { margin-top: 1.5mm; white-space: pre-line; }
+
+      .totals { width: 82mm; }
       .totals .row {
         display: flex;
         justify-content: space-between;
         gap: 6mm;
-        padding: 1.6mm 0;
-        font-size: 9pt;
-      }
-      .totals .row.grand {
-        border-top: 1.2pt solid #0B0D0F;
-        margin-top: 1.5mm;
-        padding-top: 2.5mm;
+        padding: 2mm 0;
         font-size: 11pt;
+        border-bottom: 0.5pt solid #e3e5e7;
+      }
+      .totals .row .value { font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .totals .row.paid { color: #4b5157; font-size: 10.5pt; }
+      .totals .row.grand {
+        margin: 2mm 0;
+        padding: 3.4mm 4mm;
+        border: 1.2pt solid #3a3f44;
+        border-radius: 3mm;
+        background: #f4f5f6;
+        color: #1b1e20;
+        font-size: 13pt;
         font-weight: bold;
       }
-      .totals .row.grand .value { color: #15A34A; }
-      .totals .row.muted-row { color: #4c5157; font-size: 8.6pt; }
-
-      .notes {
-        margin-top: 7mm;
-        border-top: 0.6pt solid #d7dbdf;
-        padding-top: 4mm;
-      }
-      .notes h2 {
-        font-size: 8pt;
-        text-transform: uppercase;
-        letter-spacing: 0.7pt;
-        color: #7a7f85;
-        margin-bottom: 1.5mm;
-      }
-      .notes p { white-space: pre-line; font-size: 9pt; }
-
-      .footer {
-        margin-top: 9mm;
-        padding-top: 4mm;
-        border-top: 0.6pt solid #d7dbdf;
-        font-size: 8pt;
-        color: #7a7f85;
-        display: flex;
-        justify-content: space-between;
-        gap: 6mm;
-      }
-      .thanks { margin-top: 5mm; font-size: 9pt; color: #4c5157; }
     </style>
   </head>
   <body>
-    <header class="header">
+    <header class="topbar">
       <div class="brand">
         {% if logo_data_uri %}
           <img class="logo" src="{{ logo_data_uri }}" alt="">
@@ -165,9 +201,9 @@
         <div>
           <p class="brand-name">{% if company %}{{ company.name }}{% else %}KCDélices{% endif %}</p>
           {% if company %}
-            {% if company.location %}<p class="brand-info">{{ company.location }}</p>{% endif %}
-            {% if company.phone_list %}<p class="brand-info">{{ company.phone_list|join:" · " }}</p>{% endif %}
-            {% if company.email %}<p class="brand-info">{{ company.email }}</p>{% endif %}
+            {% if company.location %}<p class="brand-meta">{{ company.location }}</p>{% endif %}
+            {% if company.phone_list %}<p class="brand-meta">{{ company.phone_list|join:" · " }}</p>{% endif %}
+            {% if company.email %}<p class="brand-meta">{{ company.email }}</p>{% endif %}
           {% endif %}
         </div>
       </div>
@@ -175,26 +211,34 @@
       <div class="doc-title">
         <h1>Devis</h1>
         <p class="reference">N° {{ quote.reference }}</p>
-        <p class="dates">{% trans "Créé le" %} {{ quote.created_at|date:"d/m/Y" }}</p>
+        <p class="dates">{% trans "Établi le" %} {{ quote.created_at|date:"d/m/Y" }}</p>
         {% if quote.valid_until %}
           <p class="dates">{% trans "Valable jusqu’au" %} {{ quote.valid_until|date:"d/m/Y" }}</p>
         {% endif %}
       </div>
     </header>
 
+    {# Objet du devis #}
+    {% if quote.title %}
+      <div class="subject">
+        <p class="label">{% trans "Objet du devis" %}</p>
+        <p class="text">{{ quote.title }}</p>
+      </div>
+    {% endif %}
+
     <div class="parties">
       <section class="box">
         <h2>{% trans "Client" %}</h2>
-        <p class="strong">{{ quote.client_name }}</p>
-        <p class="muted">{{ quote.client_phone }}</p>
-        {% if quote.client_email %}<p class="muted">{{ quote.client_email }}</p>{% endif %}
-        {% if quote.client_address %}<p class="muted">{{ quote.client_address }}</p>{% endif %}
+        <p class="strong"> Nom :{{ quote.client_name }}</p>
+        <p class="muted"> Téléphone :{{ quote.client_phone }}</p>
+        {% if quote.client_email %}<p class="muted"> Email :{{ quote.client_email }}</p>{% endif %}
+        {% if quote.client_address %}<p class="muted"> Adresse :{{ quote.client_address }}</p>{% endif %}
       </section>
 
       <section class="box">
         <h2>{% trans "Événement" %}</h2>
-        {% if quote.title %}<p class="strong">{{ quote.title }}</p>{% endif %}
-        <p class="muted">{% trans "Lieu" %} : {{ quote.event_location }}</p>
+        {% if quote.title %}<p class="strong"> Evenement :{{ quote.title }}</p>{% endif %}
+        <p class="muted"> Lieu :{{ quote.event_location }}</p>
         {% if quote.event_date %}
           <p class="muted">{% trans "Date" %} : {{ quote.event_date|date:"d/m/Y" }}</p>
         {% endif %}
@@ -204,6 +248,7 @@
     <table class="items">
       <thead>
         <tr>
+          <th class="num">#</th>
           <th>{% trans "Désignation" %}</th>
           <th class="right">{% trans "Qté" %}</th>
           <th class="right">{% trans "Prix unitaire" %}</th>
@@ -213,6 +258,7 @@
       <tbody>
         {% for item in items %}
           <tr>
+            <td class="num">{{ forloop.counter }}</td>
             <td>{{ item.obj.title }}</td>
             <td class="right">{{ item.obj.quantity|unlocalize }}</td>
             <td class="right">{{ item.obj.unit_price|unlocalize }} FCFA</td>
@@ -220,51 +266,49 @@
           </tr>
         {% empty %}
           <tr>
-            <td colspan="4" class="muted">{% trans "Aucune prestation enregistrée." %}</td>
+            <td colspan="5" class="muted">{% trans "Aucune prestation enregistrée." %}</td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
 
-    <div class="totals">
-      <div class="row">
-        <span>{% trans "Sous-total" %}</span>
-        <span>{{ quote.subtotal|unlocalize }} FCFA</span>
+    <div class="bottom">
+      <div class="terms">
+        {% if quote.notes %}
+          <h2>{% trans "Conditions particulières" %}</h2>
+          <p>{{ quote.notes }}</p>
+        {% endif %}
+        {% if quote.valid_until %}
+          <p class="muted">{% trans "Ce devis reste valable jusqu’au" %} {{ quote.valid_until|date:"d/m/Y" }}.</p>
+        {% endif %}
       </div>
-      <div class="row">
-        <span>{% trans "Réduction" %}</span>
-        <span>− {{ quote.discount|unlocalize }} FCFA</span>
-      </div>
-      <div class="row">
-        <span>{% trans "Transport" %}</span>
-        <span>+ {{ quote.transport_cost|unlocalize }} FCFA</span>
-      </div>
-      <div class="row grand">
-        <span>{% trans "TOTAL" %}</span>
-        <span class="value">{{ quote.total_amount|unlocalize }} FCFA</span>
-      </div>
-      <div class="row muted-row">
-        <span>{% trans "Acompte prévu" %}</span>
-        <span>{{ quote.deposit_amount|unlocalize }} FCFA</span>
-      </div>
-      <div class="row muted-row">
-        <span>{% trans "Reste à régler" %}</span>
-        <span>{{ quote.balance_due|unlocalize }} FCFA</span>
+
+      <div class="totals">
+        <div class="row">
+          <span>{% trans "Sous-total" %}</span>
+          <span class="value">{{ quote.subtotal|unlocalize }} FCFA</span>
+        </div>
+        <div class="row">
+          <span>{% trans "Réduction" %}</span>
+          <span class="value">− {{ quote.discount|unlocalize }} FCFA</span>
+        </div>
+        <div class="row">
+          <span>{% trans "Transport" %}</span>
+          <span class="value">+ {{ quote.transport_cost|unlocalize }} FCFA</span>
+        </div>
+        <div class="row grand">
+          <span>{% trans "TOTAL" %}</span>
+          <span class="value">{{ quote.total_amount|unlocalize }} FCFA</span>
+        </div>
+        <div class="row paid">
+          <span>{% trans "Acompte prévu" %}</span>
+          <span class="value">{{ quote.deposit_amount|unlocalize }} FCFA</span>
+        </div>
+        <div class="row paid">
+          <span>{% trans "Reste à régler" %}</span>
+          <span class="value">{{ quote.balance_due|unlocalize }} FCFA</span>
+        </div>
       </div>
     </div>
-
-    {% if quote.notes %}
-      <section class="notes">
-        <h2>{% trans "Conditions particulières" %}</h2>
-        <p>{{ quote.notes }}</p>
-      </section>
-    {% endif %}
-
-    <p class="thanks">{% trans "Merci pour votre confiance." %}</p>
-
-    <footer class="footer">
-      <span>{% if company %}{{ company.name }}{% else %}KCDélices{% endif %}</span>
-      <span>{% trans "Devis généré le" %} {{ generated_at|date:"d/m/Y à H:i" }}</span>
-    </footer>
   </body>
 </html>

@@ -14,7 +14,7 @@
     <h1 class="text-2xl font-bold sm:text-3xl">
       {% if quote %}{% trans "Modifier le devis" %}{% else %}{% trans "Nouveau devis" %}{% endif %}
     </h1>
-    <p class="mt-2 text-noir/70">
+    <p class="mt-2 text-sm text-noir/60 sm:text-base">
       {% trans "Les totaux sont recalculés côté serveur à l’enregistrement." %}
     </p>
   </div>
@@ -24,18 +24,18 @@
     {{ formset.management_form }}
 
     {% if form.non_field_errors or formset.non_form_errors %}
-      <div class="lg:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+      <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 lg:col-span-2">
         {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
         {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
       </div>
     {% endif %}
 
     <div class="space-y-6">
-      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-4 sm:p-6">
         <div class="mb-5">
           <h2 class="text-lg font-bold">{% trans "Client" %}</h2>
           <p class="mt-1 text-sm text-noir/60">
-            {% trans "Le nom et le numéro sont obligatoires : ils permettront d’enregistrer ce client après la génération du devis." %}
+            {% trans "Le nom et le numéro sont obligatoires : ils permettent d’identifier le client du devis." %}
           </p>
         </div>
 
@@ -71,7 +71,7 @@
         </div>
       </section>
 
-      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-4 sm:p-6">
         <h2 class="mb-5 text-lg font-bold">{% trans "Événement" %}</h2>
 
         <div class="grid gap-4 sm:grid-cols-2">
@@ -106,68 +106,70 @@
         </div>
       </section>
 
-      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-4 sm:p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-bold">{% trans "Prestations" %}</h2>
-            <p class="mt-1 text-sm text-noir/60">{% trans "Désignations libres : location, décoration, traiteur, transport…" %}</p>
+            <p class="mt-1 text-sm text-noir/60">{% trans "Location, décoration, traiteur, transport…" %}</p>
           </div>
-          <button type="button" data-add-item class="btn-text">
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-              <line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" />
-            </svg>
-            {% trans "Ajouter une ligne" %}
-          </button>
+          
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full min-w-[36rem] text-left text-sm">
-            <thead class="border-b border-noir/10 text-xs font-semibold uppercase tracking-wide text-noir/60">
-              <tr>
-                <th class="pb-3 pr-3">{% trans "Désignation" %}</th>
-                <th class="w-24 pb-3 pr-3 text-right">{% trans "Quantité" %}</th>
-                <th class="w-32 pb-3 pr-3 text-right">{% trans "Prix unitaire" %}</th>
-                <th class="w-32 pb-3 text-right">{% trans "Total" %}</th>
-                <th class="w-10 pb-3"></th>
-              </tr>
-            </thead>
-            <tbody data-item-rows class="divide-y divide-noir/10">
-              {% for item_form in formset %}
-                <tr data-item-row class="align-top">
-                  <td class="py-3 pr-3">
-                    {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
-                    {{ item_form.title }}
-                    {% for error in item_form.title.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
-                  </td>
-                  <td class="py-3 pr-3">
-                    {{ item_form.quantity }}
-                    {% for error in item_form.quantity.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
-                  </td>
-                  <td class="py-3 pr-3">
-                    {{ item_form.unit_price }}
-                    {% for error in item_form.unit_price.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
-                  </td>
-                  <td class="py-3 text-right">
-                    <span data-line-total class="block py-3 font-semibold tabular-nums text-noir/80">0 FCFA</span>
-                  </td>
-                  <td class="py-3 text-right">
-                    <span class="hidden">{{ item_form.DELETE }}</span>
-                    <button type="button" data-remove-item
-                            class="btn-icon h-9 w-9 text-noir/50 hover:text-red-600"
-                            aria-label="{% trans 'Supprimer la ligne' %}">
-                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-                        <line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="hidden gap-3 border-b border-noir/10 pb-2 text-xs font-semibold uppercase tracking-wide text-noir/60 sm:grid sm:grid-cols-[minmax(0,1fr)_5.5rem_7.5rem_7.5rem_2.5rem]">
+          <span>{% trans "Désignation" %}</span>
+          <span class="text-right">{% trans "Quantité" %}</span>
+          <span class="text-right">{% trans "Prix unitaire" %}</span>
+          <span class="text-right">{% trans "Total" %}</span>
+          <span></span>
         </div>
+
+        <div data-item-rows class="divide-y divide-noir/10">
+          {% for item_form in formset %}
+            <div data-item-row class="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_5.5rem_7.5rem_7.5rem_2.5rem] sm:items-start sm:gap-3 sm:py-3">
+              <div class="sm:pt-3">
+                <label for="{{ item_form.title.id_for_label }}" class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Désignation" %}</label>
+                {% for hidden in item_form.hidden_fields %}{{ hidden }}{% endfor %}
+                {{ item_form.title }}
+                {% for error in item_form.title.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+              </div>
+              <div class="grid grid-cols-2 gap-3 sm:contents">
+                <div>
+                  <label for="{{ item_form.quantity.id_for_label }}" class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Quantité" %}</label>
+                  {{ item_form.quantity }}
+                  {% for error in item_form.quantity.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+                </div>
+                <div>
+                  <label for="{{ item_form.unit_price.id_for_label }}" class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Prix unitaire" %}</label>
+                  {{ item_form.unit_price }}
+                  {% for error in item_form.unit_price.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+                </div>
+              </div>
+              <div class="flex items-center justify-between border-t border-dashed border-noir/10 pt-2 sm:block sm:border-0 sm:pt-3 sm:text-right">
+                <span class="text-xs font-semibold text-noir/60 sm:hidden">{% trans "Total" %}</span>
+                <span data-line-total class="font-semibold tabular-nums text-noir/80">0 FCFA</span>
+              </div>
+              <div class="flex justify-end sm:pt-1.5">
+                <span class="hidden">{{ item_form.DELETE }}</span>
+                <button type="button" data-remove-item
+                        class="flex h-9 w-9 items-center justify-center rounded-full text-noir/40 transition hover:bg-noir/5 hover:text-red-600"
+                        aria-label="{% trans 'Supprimer la ligne' %}">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" data-add-item class="btn-secondary ">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" x2="12" y1="5" y2="19" /><line x1="5" x2="19" y1="12" y2="12" />
+          </svg>
+          {% trans "Ajouter" %}
+        </button>
       </section>
 
-      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-4 sm:p-6">
         <h2 class="mb-5 text-lg font-bold">{% trans "Conditions" %}</h2>
         <label for="{{ form.notes.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">
           {% trans "Conditions particulières" %}
@@ -178,10 +180,13 @@
     </div>
 
     <aside class="space-y-5 lg:sticky lg:top-24 lg:self-start">
-      <section class="rounded-2xl bg-noir p-5 text-blanc sm:p-6">
-        <h2 class="text-lg font-bold">{% trans "Récapitulatif" %}</h2>
+      <section class="rounded-2xl bg-noir p-4 text-blanc sm:p-6">
+        <div class="flex items-baseline justify-between gap-3">
+          <h2 class="text-lg font-bold">{% trans "Récapitulatif" %}</h2>
+          <span class="text-xs text-blanc/50">{% trans "FCFA" %}</span>
+        </div>
 
-        <dl class="mt-5 space-y-3 text-sm">
+        <dl class="mt-4 space-y-2.5 text-sm">
           <div class="flex items-center justify-between gap-3">
             <dt class="text-blanc/70">{% trans "Sous-total" %}</dt>
             <dd class="font-medium tabular-nums" data-summary="subtotal">{{ form.instance.subtotal|unlocalize }} FCFA</dd>
@@ -194,15 +199,15 @@
             <dt class="text-blanc/70">{% trans "Transport" %}</dt>
             <dd class="font-medium tabular-nums" data-summary="transport">0 FCFA</dd>
           </div>
-          <div class="flex items-center justify-between gap-3 border-t border-blanc/20 pt-3">
+          <div class="flex items-baseline justify-between gap-3 pt-3">
             <dt class="font-semibold">{% trans "Total" %}</dt>
-            <dd class="text-lg font-bold tabular-nums text-vert" data-summary="total">0 FCFA</dd>
+            <dd class="text-xl font-bold tabular-nums text-vert" data-summary="total">0 FCFA</dd>
           </div>
           <div class="flex items-center justify-between gap-3">
             <dt class="text-blanc/70">{% trans "Acompte prévu" %}</dt>
             <dd class="font-medium tabular-nums" data-summary="deposit">0 FCFA</dd>
           </div>
-          <div class="flex items-center justify-between gap-3 border-t border-blanc/20 pt-3">
+          <div class="flex items-center justify-between gap-3  pt-3">
             <dt class="font-semibold">{% trans "Reste à régler" %}</dt>
             <dd class="font-semibold tabular-nums" data-summary="balance">0 FCFA</dd>
           </div>
@@ -213,10 +218,10 @@
         </p>
       </section>
 
-      <section class="rounded-2xl border border-noir/10 p-5 sm:p-6">
+      <section class="rounded-2xl border border-noir/10 bg-blanc p-4 sm:p-6">
         <h2 class="mb-4 text-sm font-bold uppercase tracking-wide text-noir/60">{% trans "Montants" %}</h2>
 
-        <div class="space-y-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
           <div>
             <label for="{{ form.discount.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-noir">{% trans "Réduction (FCFA)" %}</label>
             {{ form.discount }}
@@ -246,30 +251,36 @@
     </aside>
 
     <template data-item-template>
-      <tr data-item-row class="align-top">
-        <td class="py-3 pr-3">
+      <div data-item-row class="grid gap-3 py-4 sm:grid-cols-[minmax(0,1fr)_5.5rem_7.5rem_7.5rem_2.5rem] sm:items-start sm:gap-3 sm:py-3">
+        <div class="sm:pt-3">
+          <label class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Désignation" %}</label>
           {{ formset.empty_form.title }}
-        </td>
-        <td class="py-3 pr-3">
-          {{ formset.empty_form.quantity }}
-        </td>
-        <td class="py-3 pr-3">
-          {{ formset.empty_form.unit_price }}
-        </td>
-        <td class="py-3 text-right">
-          <span data-line-total class="block py-3 font-semibold tabular-nums text-noir/80">0 FCFA</span>
-        </td>
-        <td class="py-3 text-right">
+        </div>
+        <div class="grid grid-cols-2 gap-3 sm:contents">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Quantité" %}</label>
+            {{ formset.empty_form.quantity }}
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-noir/60 sm:hidden">{% trans "Prix unitaire" %}</label>
+            {{ formset.empty_form.unit_price }}
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-dashed border-noir/10 pt-2 sm:block sm:border-0 sm:pt-3 sm:text-right">
+          <span class="text-xs font-semibold text-noir/60 sm:hidden">{% trans "Total" %}</span>
+          <span data-line-total class="font-semibold tabular-nums text-noir/80">0 FCFA</span>
+        </div>
+        <div class="flex justify-end sm:pt-1.5">
           <span class="hidden">{{ formset.empty_form.DELETE }}</span>
           <button type="button" data-remove-item
-                  class="btn-icon h-9 w-9 text-noir/50 hover:text-red-600"
+                  class="flex h-9 w-9 items-center justify-center rounded-full text-noir/40 transition hover:bg-noir/5 hover:text-red-600"
                   aria-label="{% trans 'Supprimer la ligne' %}">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
               <line x1="18" x2="6" y1="6" y2="18" /><line x1="6" x2="18" y1="18" y2="6" />
             </svg>
           </button>
-        </td>
-      </tr>
+        </div>
+      </div>
     </template>
   </form>
 {% endblock %}

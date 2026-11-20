@@ -13,6 +13,12 @@ FILE_CLASSES = "w-full rounded-xl border border-noir/20 bg-blanc px-4 py-3 text-
 CHECKBOX_CLASSES = "h-5 w-5 rounded border-noir/30 text-vert accent-vert focus:ring-vert"
 
 
+class ImageFileInput(forms.ClearableFileInput):
+    """Champ fichier : uniquement le sélecteur, sans texte technique de Django."""
+
+    template_name = "espace/includes/file_input.html"
+
+
 class EventCategoryForm(forms.ModelForm):
     """Création / modification d'un type d'événement."""
 
@@ -26,7 +32,7 @@ class EventCategoryForm(forms.ModelForm):
                     "class": INPUT_CLASSES,
                 }
             ),
-            "cover_image": forms.ClearableFileInput(
+            "cover_image": ImageFileInput(
                 attrs={"class": FILE_CLASSES, "accept": "image/*", "data-preview": "category-cover"}
             ),
             "is_active": forms.CheckboxInput(attrs={"class": CHECKBOX_CLASSES}),
@@ -55,7 +61,7 @@ class AchievementImageForm(forms.ModelForm):
         model = AchievementImage
         fields = ["image"]
         widgets = {
-            "image": forms.ClearableFileInput(
+            "image": ImageFileInput(
                 attrs={"class": FILE_CLASSES, "accept": "image/*"}
             )
         }
@@ -71,7 +77,7 @@ AchievementImageFormSet = inlineformset_factory(
     AchievementImage,
     form=AchievementImageForm,
     fields=["image"],
-    extra=3,
+    extra=1,
     can_delete=True,
     min_num=0,
     validate_min=False,
@@ -88,7 +94,7 @@ class ServiceForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={"placeholder": "Ex. : Décoration de salle", "class": INPUT_CLASSES}
             ),
-            "cover_image": forms.ClearableFileInput(
+            "cover_image": ImageFileInput(
                 attrs={"class": FILE_CLASSES, "accept": "image/*", "data-preview": "service-cover"}
             ),
             "description": forms.Textarea(
