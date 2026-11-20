@@ -4,55 +4,60 @@
 {% block title %}{% trans "Services" %} — {% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}{% endblock %}
 
 {% block content %}
-  <section class="mb-12">
-    <h1 class="mb-4 text-4xl font-bold leading-tight sm:text-5xl">{% trans "Nos services" %}</h1>
-    <p class="mb-10 max-w-2xl text-lg leading-relaxed text-noir/70">
-      {% trans "Des prestations sur mesure pour accompagner vos événements vers la réussite, de la conception à la réalisation." %}
-    </p>
-  </section>
+  <div class="mx-auto max-w-6xl">
 
-  {% if services %}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {% for service in services %}
-        <article class="group flex flex-col overflow-hidden rounded-2xl bg-blanc shadow-sm ring-1 ring-noir/5 transition hover:shadow-md">
-          {# Visuel + titre en surimpression, comme sur la page réalisations #}
-          <div class="relative h-56 w-full overflow-hidden">
-            {% if service.cover_image %}
-              <img src="{{ service.cover_image.url }}" alt="{{ service.title }}"
-                   loading="lazy"
-                   class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
-            {% else %}
-              <div class="h-full w-full bg-gradient-to-br from-noir via-noir/90 to-noir/70"></div>
-            {% endif %}
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/90 via-noir/40 to-transparent"></div>
-            <h2 class="absolute bottom-0 left-0 w-full p-5 text-2xl font-extrabold leading-tight text-blanc drop-shadow-md sm:text-3xl">
-              {{ service.title }}
-            </h2>
-          </div>
+    {# ═══════════ EN-TÊTE ═══════════ #}
+    <section class="text-center">
+      <h1 class="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">{% trans "Nos services" %}</h1>
+      <p class="mx-auto mt-3 mb-10 max-w-xl text-sm leading-relaxed text-noir/70 sm:text-base">
+        {% trans "Des prestations sur mesure pour accompagner vos événements vers la réussite, de la conception à la réalisation." %}
+      </p>
+    </section>
 
-          <div class="flex flex-1 flex-col p-6" data-readmore
-               data-more-label="{% trans 'Lire plus' %}"
-               data-less-label="{% trans 'Réduire' %}">
-            {% if service.description %}
-              <p class="card-description line-clamp-3" data-readmore-text>{{ service.description }}</p>
-              <button type="button"
-                      data-readmore-toggle
-                      aria-expanded="false"
-                      class="mt-3 hidden self-start text-sm font-semibold text-vert transition hover:underline">
-                {% trans "Lire plus" %}
-              </button>
-            {% endif %}
-          </div>
-        </article>
-      {% endfor %}
-    </div>
-    {% include "components/pagination.html" %}
-  {% else %}
-    <div class="rounded-3xl bg-white p-10 text-center shadow-sm ring-1 ring-noir/10">
-      <p class="text-5xl font-bold text-noir/30">{% trans "Aucun service" %}</p>
-      <p class="mt-3 text-lg text-noir/60">{% trans "Nos prestations viendront s'ajouter bientôt à cette liste." %}</p>
-    </div>
-  {% endif %}
+    {% if services %}
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {% for service in services %}
+          <article class="group flex flex-col overflow-hidden rounded-xl bg-noir/5">
+            {# Visuel + titre en surimpression #}
+            <div class="relative h-48 w-full overflow-hidden">
+              {% if service.cover_image %}
+                <img src="{{ service.cover_image.url }}" alt="{{ service.title }}"
+                     loading="lazy"
+                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+              {% else %}
+                <div class="h-full w-full bg-gradient-to-br from-noir via-noir/90 to-noir/70"></div>
+              {% endif %}
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/80 via-noir/30 to-transparent"></div>
+              <h2 class="absolute bottom-0 left-0 w-full p-4 text-lg font-bold leading-tight text-blanc drop-shadow-md sm:text-xl">
+                {{ service.title }}
+              </h2>
+            </div>
+
+            <div class="flex flex-1 flex-col p-5" data-readmore
+                 data-more-label="{% trans 'Lire plus' %}"
+                 data-less-label="{% trans 'Réduire' %}">
+              {% if service.description %}
+                <p class="card-description line-clamp-3 text-sm leading-6 text-noir/75" data-readmore-text>{{ service.description }}</p>
+                <button type="button"
+                        data-readmore-toggle
+                        aria-expanded="false"
+                        class="mt-3 hidden self-start text-sm font-bold text-vert transition hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-vert">
+                  {% trans "Lire plus" %}
+                </button>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      {% include "components/pagination.html" %}
+    {% else %}
+      <div class="rounded-xl bg-noir/5 p-8 text-center">
+        <p class="text-2xl font-bold text-noir/40 sm:text-3xl">{% trans "Aucun service" %}</p>
+        <p class="mt-2 text-sm text-noir/60 sm:text-base">{% trans "Nos prestations viendront s'ajouter bientôt à cette liste." %}</p>
+      </div>
+    {% endif %}
+
+  </div>
 
   {% blocktrans asvar wa_message with name=company.name %}Bonjour {{ name }}, je souhaite des informations sur vos services pour mon événement.{% endblocktrans %}
   {% include "components/whatsapp_float.html" with message=wa_message %}

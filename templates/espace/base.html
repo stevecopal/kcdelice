@@ -14,11 +14,13 @@
     <aside id="admin-sidebar"
            class="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-noir/10 bg-blanc lg:flex">
       <div class="flex items-center gap-3 border-b border-noir/10 px-5 py-5">
-        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert text-sm font-bold text-blanc" aria-hidden="true">KC</span>
-        <div>
-          <p class="text-sm font-bold leading-tight">KCDélices</p>
-          <p class="text-xs text-noir/60">{% trans "Administration" %}</p>
-        </div>
+        {% if company and company.logo %}
+        <img src="{{ company.logo.url }}" alt="{% trans 'Logo' %}" class="h-10 w-10 rounded-full object-cover ring-1 ring-noir/10 transition group-hover:scale-105">
+      {% else %}
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-vert font-bold text-sm text-blanc">K</span>
+      {% endif %}
+      <span class="text-lg font-bold leading-tight text-noir">{% if company %}{{ company.name }}{% else %}{% trans "KCDélices" %}{% endif %}</span>
+        
       </div>
 
       <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="{% trans 'Navigation de l’administration' %}">
@@ -100,12 +102,11 @@
         {% endwith %}
       </nav>
 
-      <div class="border-t border-noir/10 px-4 py-4">
-        <p class="truncate text-sm font-semibold">{{ request.user.username }}</p>
+      <div class="border-t border-noir/10 px-4 py-5">
         <form method="post" action="{% url 'logout' %}" class="mt-2">
           {% csrf_token %}
           <button type="submit"
-                  class="flex items-center gap-2 text-sm font-medium text-noir/70 transition hover:text-vert">
+                  class="flex items-center gap-2 text-sm font-medium text-red-500 transition hover:text-vert">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" />
@@ -138,8 +139,8 @@
               </svg>
               {% trans "Voir le site" %}
             </a>
-            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-vert text-sm font-bold text-blanc"
-                  aria-hidden="true">{{ request.user.username|slice:":1"|upper }}</span>
+            <span class="flex h-9 w-9 items-center justify-center   text-sm font-bold text-vert"
+                  aria-hidden="true">{{ request.user.username|upper }}</span>
           </div>
         </div>
       </header>
