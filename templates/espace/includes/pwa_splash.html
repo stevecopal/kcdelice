@@ -1,0 +1,13 @@
+{% load i18n %}{# Écran de lancement de l'application installée : visible uniquement en mode standalone. #}
+<div class="pwa-splash" data-pwa-splash aria-hidden="true">
+  <div class="pwa-splash-mark">
+    <span class="pwa-splash-ring" aria-hidden="true"></span>
+    {% if company and company.logo %}
+      <img src="{{ company.logo.url }}" alt="" class="pwa-splash-logo">
+    {% else %}
+      <span class="pwa-splash-logo pwa-splash-letter" aria-hidden="true">{% if company %}{{ company.name|slice:":1"|upper }}{% else %}K{% endif %}</span>
+    {% endif %}
+  </div>
+  <p class="pwa-splash-title">{% if company %}{{ company.name }}{% else %}KCDélices{% endif %}</p>
+  <p class="pwa-splash-subtitle">{% trans "Espace d’administration" %}</p>
+</div>

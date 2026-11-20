@@ -27,6 +27,10 @@ from .views import (
     ServicesView,
     SettingsView,
 )
+from .views.pwa import icon as pwa_icon
+from .views.pwa import manifest as pwa_manifest
+from .views.pwa import offline as pwa_offline
+from .views.pwa import service_worker as pwa_service_worker
 
 urlpatterns = [
     # Espace public
@@ -39,6 +43,11 @@ urlpatterns = [
     path("deconnexion/", LogoutView.as_view(), name="logout"),
     # Administration
     path("espace/", DashboardView.as_view(), name="dashboard"),
+    # Application installable (PWA) de l'espace d'administration
+    path("espace/manifeste.webmanifest", pwa_manifest, name="espace_manifest"),
+    path("espace/icone-<int:size>.png", pwa_icon, name="espace_icon"),
+    path("espace/service-worker.js", pwa_service_worker, name="espace_service_worker"),
+    path("espace/hors-ligne/", pwa_offline, name="espace_offline"),
     path("espace/clients/", ClientsView.as_view(), name="clients"),
     path("espace/parametres/", SettingsView.as_view(), name="settings"),
     path("espace/entreprise/", CompanyUpdateView.as_view(), name="company_update"),

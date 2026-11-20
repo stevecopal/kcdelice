@@ -5,9 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Administration{% endblock %} — KCDélices</title>
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="manifest" href="{% url 'espace_manifest' %}">
+    <link rel="apple-touch-icon" href="{% url 'espace_icon' size=180 %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{% if company %}{{ company.name }}{% else %}KCDélices{% endif %} — Admin">
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    {% include "espace/includes/pwa_head.html" %}
   </head>
   <body class="min-h-screen bg-blanc text-noir">
+    {% include "espace/includes/pwa_splash.html" %}
     <div id="admin-backdrop" data-admin-backdrop
          class="fixed inset-0 z-40 hidden bg-noir/40 lg:hidden" aria-hidden="true"></div>
 
@@ -211,6 +219,7 @@
     <script src="{% static 'js/toast.js' %}" defer></script>
     <script src="{% static 'js/admin.js' %}" defer></script>
     <script src="{% static 'js/filters.js' %}" defer></script>
+    <script src="{% static 'js/pwa.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
 </html>

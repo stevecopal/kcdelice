@@ -5,11 +5,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% trans "Connexion" %} — KCDélices</title>
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="manifest" href="{% url 'espace_manifest' %}">
+    <link rel="apple-touch-icon" href="{% url 'espace_icon' size=180 %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{% if company %}{{ company.name }}{% else %}KCDélices{% endif %} — Admin">
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    {% include "espace/includes/pwa_head.html" %}
   </head>
   <body class="flex min-h-screen items-center justify-center bg-blanc px-5 py-10 text-noir">
 
+    {% include "espace/includes/pwa_splash.html" %}
+
     <main class="w-full max-w-[18rem] text-center">
+
+      
 
       <h1 class="text-3xl font-extrabold leading-tight">{% trans "Bienvenue !" %}</h1>
       <p class="mt-2 text-sm leading-relaxed text-noir/70">
@@ -77,8 +88,37 @@
         </svg>
         {% trans "Retour au site" %}
       </a>
+
+      <div class="mx-auto mt-2 hidden" data-pwa-install>
+        <button type="button" aria-controls="pwa-install-help" aria-expanded="false"
+                class="mx-auto flex h-10 items-center justify-center gap-2 rounded-lg border border-noir/15 px-5 text-sm font-semibold text-noir transition hover:border-noir/30 hover:bg-noir/5 active:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-vert focus-visible:ring-offset-2 disabled:opacity-50">
+        <svg class="h-4 w-4 text-vert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" />
+        </svg>
+          <span>{% trans "Installer l’application" %}</span>
+        </button>
+      </div>
+
+      <div id="pwa-install-help" data-pwa-help
+           class="mx-auto mt-3 hidden rounded-xl border border-noir/10 bg-noir/[0.03] px-4 py-3 text-left">
+        <p class="text-xs font-bold uppercase tracking-wide text-noir/50">{% trans "Installer l’application" %}</p>
+        <ul class="mt-2 space-y-1.5 text-xs leading-relaxed text-noir/70">
+          <li><span class="font-semibold text-noir">Android · Chrome</span> — menu ⋮ puis « Installer l’application ».</li>
+          <li><span class="font-semibold text-noir">iPhone · Safari</span> — Partager puis « Sur l’écran d’accueil ».</li>
+          <li><span class="font-semibold text-noir">Ordinateur · Chrome</span> — icône d’installation dans la barre d’adresse.</li>
+        </ul>
+        <p class="mt-2 text-[11px] leading-relaxed text-noir/50">
+          {% trans "Ces étapes ne s’affichent que si le navigateur refuse l’installation automatique (navigation privée, application déjà installée ou navigateur non compatible)." %}
+        </p>
+        <button type="button" data-pwa-retry
+                class="mt-2 inline-flex h-8 items-center justify-center rounded-lg bg-noir/5 px-3 text-xs font-semibold text-noir transition hover:bg-noir/10">
+          {% trans "Recharger la page" %}
+        </button>
+      </div>
     </main>
 
     <script src="{% static 'js/admin.js' %}" defer></script>
+    <script src="{% static 'js/pwa.js' %}" defer></script>
   </body>
 </html>

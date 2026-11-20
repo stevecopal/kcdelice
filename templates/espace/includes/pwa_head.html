@@ -1,0 +1,20 @@
+{% comment %}
+Capture de l'invite d'installation et enregistrement du service worker le plus
+tôt possible : Chrome n'émet `beforeinstallprompt` qu'une fois le service worker
+actif, et l'événement peut arriver avant le chargement de pwa.js.
+{% endcomment %}
+<script>
+  (function () {
+    window.__pwaInstallPrompt = null;
+    window.addEventListener("beforeinstallprompt", function (event) {
+      event.preventDefault();
+      window.__pwaInstallPrompt = event;
+      document.dispatchEvent(new Event("pwa:installprompt"));
+    });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("{% url 'espace_service_worker' %}", { scope: "/" })
+        .catch(function () {});
+    }
+  })();
+</script>
