@@ -1,0 +1,109 @@
+{
+  "_readme": [
+    "Fichier de configuration des fausses données (seed) — KC Délices.",
+    "Modèles couverts : entreprise, catégories, réalisations (+ images), services.",
+    "Devis volontairement absents : aucun Quote/QuoteItem n'est créé depuis ce fichier.",
+    "Photos : déposez les fichiers dans media/ sous les chemins indiqués ci-dessous",
+    "(logo, cover_image, images). Un fichier absent est simplement ignoré au chargement.",
+    "Chemins relatifs à media/ : company/…, categories/…, achievements/images/…, services/…"
+  ],
+
+  "company": {
+    "name": "KC Délices",
+    "logo": "company/logo.png",
+    "presentation": "KC Délices est une maison événementielle basée à Douala, née d'une passion pour la pâtisserie et l'art de recevoir. Depuis plus de dix ans, nous imaginons et réalisons des événements qui marquent les esprits, du premier croquis à la dernière décoration.\n\nMariages, anniversaires, baptêmes, cérémonies d'entreprise ou soirées privées : chaque projet est unique. Nous commençons par écouter, comprendre votre univers et vos contraintes, puis nous concevons une expérience qui vous ressemble.\n\nUne équipe pluridisciplinaire — pâtissiers, décorateurs, cuisiniers et logisticiens — travaille main dans la main vers un seul objectif : une réception fluide, généreuse et sans fausse note, dont vos invités parlent longtemps après la fête.",
+    "mission": "Transformer chaque événement en un souvenir intact, en réunissant saveurs, décor et organisation au même niveau d'exigence.\n\nÊtre le partenaire sur qui vous pouvez compter : présent des premières idées jusqu'au dernier rangement, transparent sur les prix, ponctuel le jour J et attentif aux détails qui font la différence.",
+    "vision": "Devenir la référence de l'événementiel sur mesure en Afrique centrale, reconnue pour la finesse de ses créations et la fiabilité de son organisation.\n\nFaire grandir les talents locaux : former des pâtissiers, des décorateurs et des organisateurs capables de porter cette exigence loin.",
+    "location": "Douala, Cameroun",
+    "phones": ["+237 690 00 00 00", "+237 677 00 00 00"],
+    "whatsapp": "+237 690 00 00 00",
+    "email": "contact@kcdelices.cm",
+    "social_links": [
+      { "label": "Facebook", "url": "https://facebook.com/kcdelices" },
+      { "label": "Instagram", "url": "https://instagram.com/kcdelices" },
+      { "label": "TikTok", "url": "https://tiktok.com/@kcdelices" }
+    ]
+  },
+
+  "categories": [
+    { "name": "Mariages", "cover_image": "categories/mariages.jpg", "is_active": true },
+    { "name": "Anniversaires", "cover_image": "categories/anniversaires.jpg", "is_active": true },
+    { "name": "Baptêmes", "cover_image": "categories/baptemes.jpg", "is_active": true },
+    { "name": "Fiançailles", "cover_image": "categories/fiancailles.jpg", "is_active": true },
+    { "name": "Entreprises", "cover_image": "categories/entreprises.jpg", "is_active": true },
+    { "name": "Cocktails", "cover_image": "categories/cocktails.jpg", "is_active": true },
+    { "name": "Séminaires", "cover_image": "categories/seminaires.jpg", "is_active": true },
+    { "name": "Fêtes de fin d'année", "cover_image": "categories/fetes-fin-annee.jpg", "is_active": true },
+    { "name": "Remises de diplômes", "cover_image": "categories/remises-diplomes.jpg", "is_active": true },
+    { "name": "Baby showers", "cover_image": "categories/baby-showers.jpg", "is_active": true },
+    { "name": "Ouvertures de boutique", "cover_image": "categories/ouvertures-boutique.jpg", "is_active": true },
+    { "name": "Dîners privés", "cover_image": "categories/diners-prives.jpg", "is_active": true }
+  ],
+
+  "achievements": [
+    {
+      "title": "Mariage d'Aïcha & Marc",
+      "category": "Mariages",
+      "is_active": true,
+      "images": [
+        "achievements/images/mariage-aicha-marc/01.jpg",
+        "achievements/images/mariage-aicha-marc/02.jpg",
+        "achievements/images/mariage-aicha-marc/03.jpg",
+        "achievements/images/mariage-aicha-marc/04.jpg"
+      ]
+    },
+    {
+      "title": "50 ans de M. Etoundi",
+      "category": "Anniversaires",
+      "is_active": true,
+      "images": [
+        "achievements/images/anniversaire-etoundi/01.jpg",
+        "achievements/images/anniversaire-etoundi/02.jpg",
+        "achievements/images/anniversaire-etoundi/03.jpg"
+      ]
+    },
+    {
+      "title": "Séminaire annuel Atlantic Bank",
+      "category": "Séminaires",
+      "is_active": true,
+      "images": [
+        "achievements/images/seminaire-atlantic-bank/01.jpg",
+        "achievements/images/seminaire-atlantic-bank/02.jpg",
+        "achievements/images/seminaire-atlantic-bank/03.jpg"
+      ]
+    }
+  ],
+
+  "services": [
+    {
+      "title": "Traiteur & buffets",
+      "description": "Menus sur mesure, service en salle et buffets dressés pour vos réceptions, du cocktail dînatoire au dîner assis.",
+      "cover_image": "services/traiteur.jpg",
+      "is_active": true
+    },
+    {
+      "title": "Pâtisserie & gâteaux",
+      "description": "Gâteaux d'anniversaire, pièces montées et mignardises préparés le jour même avec des produits frais.",
+      "cover_image": "services/patisserie.jpg",
+      "is_active": true
+    },
+    {
+      "title": "Décoration de salle",
+      "description": "Scénographie complète : tentures, tables, fleurs, éclairage et mobilier coordonnés à votre thème.",
+      "cover_image": "services/decoration.jpg",
+      "is_active": true
+    },
+    {
+      "title": "Organisation d'événements",
+      "description": "Planification de A à Z : budget, prestataires, rétroplanning et coordination le jour J.",
+      "cover_image": "services/organisation.jpg",
+      "is_active": true
+    },
+    {
+      "title": "Location de matériel",
+      "description": "Vaisselle, nappes, chaises, tables et sonorisation à louer pour vos événements à Douala et alentours.",
+      "cover_image": "services/location-materiel.jpg",
+      "is_active": true
+    }
+  ]
+}

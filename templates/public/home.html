@@ -13,27 +13,30 @@
     </div>
 
     {% if categories %}
-      {# Galerie masonry : 2 colonnes mobile, 3 tablette, 4 desktop #}
-      <div class="columns-2 gap-3 md:columns-3 lg:columns-4">
+      {# Grille masonry : 2 colonnes mobile, 3 tablette, 4 desktop. L'unité de ligne grandit avec l'écran pour garder les mêmes proportions. #}
+      <div class="grid grid-flow-dense grid-cols-2 auto-rows-[10px] gap-x-3 md:grid-cols-3 md:auto-rows-[12px] lg:grid-cols-4 lg:auto-rows-[14px]">
         {% for category in categories %}
-          {% cycle 'h-48' 'h-72' 'h-60' 'h-80' 'h-52' 'h-64' as card_height silent %}
-          <a href="{% url 'category_detail' category.pk %}"
-             class="group relative mb-3 block break-inside-avoid overflow-hidden rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-vert focus-visible:ring-offset-2">
-            {% if category.cover_image %}
-              <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
-                   loading="lazy"
-                   class="{{ card_height }} w-full object-cover transition duration-500 group-hover:scale-105">
-            {% else %}
-              <div class="{{ card_height }} flex w-full items-center justify-center bg-noir/10">
-                <span class="px-2 text-center text-sm font-medium text-noir/50">{% trans "Aucune image" %}</span>
-              </div>
-            {% endif %}
-            {# Dégradé de lisibilité, couleurs de la config #}
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/80 via-noir/30 to-transparent"></div>
-            <span class="absolute bottom-0 left-0 w-full p-3 text-lg font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-xl">
-              {{ category.name }}
-            </span>
-          </a>
+          {# Cycle de 7 cartes : grande 22, petite 16 (≈75 %), grande 22, petite 16, très grande 32, petite 16, petite 16. Colonnes équilibrées. #}
+          {% cycle '[grid-row:span_22]' '[grid-row:span_16]' '[grid-row:span_22]' '[grid-row:span_16]' '[grid-row:span_32]' '[grid-row:span_16]' '[grid-row:span_16]' as card_span silent %}
+          <div class="{{ card_span }} pb-3">
+            <a href="{% url 'category_detail' category.pk %}"
+               class="group relative block h-full w-full overflow-hidden rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-vert focus-visible:ring-offset-2">
+              {% if category.cover_image %}
+                <img src="{{ category.cover_image.url }}" alt="{{ category.name }}"
+                     loading="lazy"
+                     class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105">
+              {% else %}
+                <div class="absolute inset-0 flex items-center justify-center bg-noir/10">
+                  <span class="px-2 text-center text-sm font-medium text-noir/50">{% trans "Aucune image" %}</span>
+                </div>
+              {% endif %}
+              {# Dégradé de lisibilité, couleurs de la config #}
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-noir/75 via-noir/10 to-transparent"></div>
+              <span class="absolute bottom-0 left-0 w-full p-3 text-xl font-bold leading-tight text-blanc drop-shadow-md sm:p-4 sm:text-2xl">
+                {{ category.name }}
+              </span>
+            </a>
+          </div>
         {% endfor %}
       </div>
       {% include "components/pagination.html" %}
