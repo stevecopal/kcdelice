@@ -1,17 +1,18 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import DeleteView, DetailView
 
+from core.views.mixins import StaffRequiredMixin
+
 from ..models import Quote
 from ..services.calculations import line_total, quote_balance
 from ..services.status import allowed_statuses, change_status
 
 
-class QuoteDetailView(LoginRequiredMixin, DetailView):
+class QuoteDetailView(StaffRequiredMixin, DetailView):
     """Détail d'un devis : client, événement, lignes, montants et actions."""
 
     model = Quote
@@ -34,7 +35,7 @@ class QuoteDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class QuoteStatusUpdateView(LoginRequiredMixin, View):
+class QuoteStatusUpdateView(StaffRequiredMixin, View):
     """Change le statut d'un devis selon les transitions autorisées."""
 
     def post(self, request, pk):
@@ -52,7 +53,7 @@ class QuoteStatusUpdateView(LoginRequiredMixin, View):
         return redirect("quote_detail", pk=quote.pk)
 
 
-class QuoteDeleteView(LoginRequiredMixin, DeleteView):
+class QuoteDeleteView(StaffRequiredMixin, DeleteView):
     """Supprime un devis, uniquement s'il est encore au brouillon."""
 
     model = Quote

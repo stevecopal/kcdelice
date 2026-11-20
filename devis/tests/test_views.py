@@ -58,6 +58,28 @@ def test_quote_list_requires_login(client):
 
 
 @pytest.mark.django_db
+def test_quote_list_forbidden_for_non_staff(client, django_user_model):
+    user = django_user_model.objects.create_user(
+        username="visiteur", password="Pass1234!"
+    )
+    client.force_login(user)
+    response = client.get("/devis/")
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_quote_detail_forbidden_for_non_staff(
+    client, django_user_model, quote
+):
+    user = django_user_model.objects.create_user(
+        username="visiteur", password="Pass1234!"
+    )
+    client.force_login(user)
+    response = client.get(f"/devis/{quote.pk}/")
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
 def test_quote_list_displays_reference_and_client(auth_client, quote):
     response = auth_client.get("/devis/")
     assert response.status_code == 200

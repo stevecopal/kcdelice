@@ -1,14 +1,15 @@
 from urllib.parse import urlencode
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic import ListView
 
+from core.views.mixins import StaffRequiredMixin
+
 from ..models import Quote
 
 
-class QuoteListView(LoginRequiredMixin, ListView):
+class QuoteListView(StaffRequiredMixin, ListView):
     """Liste des devis avec recherche par référence/client et filtre par statut."""
 
     model = Quote

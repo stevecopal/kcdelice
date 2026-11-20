@@ -1,15 +1,16 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.views.generic import TemplateView
 
+from core.views.mixins import StaffRequiredMixin
+
 from ..forms import QuoteForm, QuoteItemFormSet, posted_totals
 from ..models import Quote
 
 
-class QuoteFormView(LoginRequiredMixin, TemplateView):
+class QuoteFormView(StaffRequiredMixin, TemplateView):
     """Création d'un devis, ou modification d'un brouillon, avec lignes dynamiques."""
 
     template_name = "devis/quote_form.html"

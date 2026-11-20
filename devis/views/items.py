@@ -1,8 +1,9 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView
+
+from core.views.mixins import StaffRequiredMixin
 
 from ..forms import QuoteItemForm
 from ..models import Quote, QuoteItem
@@ -19,7 +20,7 @@ class EditableQuoteMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class QuoteItemCreateView(EditableQuoteMixin, LoginRequiredMixin, CreateView):
+class QuoteItemCreateView(EditableQuoteMixin, StaffRequiredMixin, CreateView):
     """Ajoute une ligne à un brouillon."""
 
     model = QuoteItem
@@ -40,7 +41,7 @@ class QuoteItemCreateView(EditableQuoteMixin, LoginRequiredMixin, CreateView):
         return context
 
 
-class QuoteItemDeleteView(LoginRequiredMixin, DeleteView):
+class QuoteItemDeleteView(StaffRequiredMixin, DeleteView):
     """Supprime une ligne d'un brouillon et recalcule le devis."""
 
     model = QuoteItem

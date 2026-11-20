@@ -1,13 +1,14 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView
+
+from core.views.mixins import StaffRequiredMixin
 
 from ..forms import QuoteForm
 from ..models import Quote
 
 
-class QuoteCreateView(LoginRequiredMixin, CreateView):
+class QuoteCreateView(StaffRequiredMixin, CreateView):
     """Création d'un devis bref (client facultatif)."""
 
     model = Quote
